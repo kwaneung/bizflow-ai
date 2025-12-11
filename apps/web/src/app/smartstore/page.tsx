@@ -52,6 +52,11 @@ export default function SmartStorePage() {
 
       const result = await response.json();
 
+      // Check HTTP status first, then check response body
+      if (!response.ok) {
+        throw new Error(result.error || `서버 오류: ${response.status}`);
+      }
+
       if (!result.success) {
         throw new Error(result.error || '콘텐츠 생성에 실패했습니다.');
       }
@@ -175,7 +180,10 @@ export default function SmartStorePage() {
                   className="text-sm font-medium flex items-center gap-2"
                 >
                   가격
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0"
+                  >
                     선택
                   </Badge>
                 </Label>
@@ -208,7 +216,10 @@ export default function SmartStorePage() {
                   className="text-sm font-medium flex items-center gap-2"
                 >
                   카테고리
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0"
+                  >
                     선택
                   </Badge>
                 </Label>

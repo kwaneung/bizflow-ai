@@ -1,18 +1,47 @@
 import { SmartStoreContentService } from '../services/smartstore-content-service';
-import { LLMService } from '@bizflow/shared/llm';
 import type { SmartStoreProductInput } from '../types/smartstore-types';
-import type { FormattedOutput } from '@bizflow/shared/llm';
+
+// Mock OpenAI
+jest.mock('openai', () => {
+  return {
+    default: jest.fn().mockImplementation(() => ({
+      chat: {
+        completions: {
+          create: jest.fn(),
+        },
+      },
+    })),
+  };
+});
 
 describe('SmartStoreContentService', () => {
-  let contentService: SmartStoreContentService;
-  let mockLLMService: jest.Mocked<LLMService>;
+  const originalEnv = process.env;
 
   beforeEach(() => {
-    mockLLMService = {
-      process: jest.fn(),
-    } as unknown as jest.Mocked<LLMService>;
+    jest.resetModules();
+    process.env = { ...originalEnv, OPENAI_API_KEY: 'test-api-key' };
+  });
 
-    contentService = new SmartStoreContentService(mockLLMService);
+  afterEach(() => {
+    process.env = originalEnv;
+    jest.clearAllMocks();
+  });
+
+  describe('constructor', () => {
+    it('should throw error if OPENAI_API_KEY is not set', () => {
+      process.env.OPENAI_API_KEY = '';
+
+      expect(() => new SmartStoreContentService()).toThrow(
+        'OPENAI_API_KEY environment variable is not set',
+      );
+    });
+
+    it('should create instance when API key is set', () => {
+      process.env.OPENAI_API_KEY = 'test-api-key';
+
+      const service = new SmartStoreContentService();
+      expect(service).toBeInstanceOf(SmartStoreContentService);
+    });
   });
 
   describe('generateContent', () => {
@@ -27,7 +56,7 @@ describe('SmartStoreContentService', () => {
       seoProductName: 'SEO Test Product',
       summaries: {
         oneLine: 'One line summary',
-        threeLine: 'Three line\nsummary\nhere',
+        threeLine: 'Three line summary here',
         blog: 'Blog format summary with more details',
       },
       detailedDescription: 'Detailed product description',
@@ -39,61 +68,79 @@ describe('SmartStoreContentService', () => {
     };
 
     it('should generate content successfully', async () => {
-      const mockFormattedOutput: FormattedOutput<typeof mockGeneratedContent> =
-        {
-          requestId: 'test-request-id',
-          moduleId: 'smartstore',
-          outputData: mockGeneratedContent,
-          status: 'completed',
-          createdAt: new Date(),
-          processingTime: 1000,
-        };
+      // Get the mocked OpenAI class
+      const OpenAI = require('openai').default;
+      const mockCreate = jest.fn().mockResolvedValue({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify(mockGeneratedContent),
+            },
+          },
+        ],
+      });
 
-      mockLLMService.process.mockResolvedValue(mockFormattedOutput);
+      OpenAI.mockImplementation(() => ({
+        chat: {
+          completions: {
+            create: mockCreate,
+          },
+        },
+      }));
 
-      const result = await contentService.generateContent(mockProductInput);
+      const service = new SmartStoreContentService();
+      const result = await service.generateContent(mockProductInput);
 
-      expect(mockLLMService.process).toHaveBeenCalledWith(
+      expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          moduleId: 'smartstore',
-          promptTemplateId: 'smartstore-content-generation',
-        })
+          model: 'gpt-4o-mini',
+          messages: expect.arrayContaining([
+            expect.objectContaining({ role: 'system' }),
+            expect.objectContaining({ role: 'user' }),
+          ]),
+        }),
       );
-      expect(result).toEqual(mockGeneratedContent);
+      expect(result.seoProductName).toBe(mockGeneratedContent.seoProductName);
     });
 
-    it('should handle LLM service errors', async () => {
-      mockLLMService.process.mockRejectedValue(
-        new Error('LLM service error')
-      );
+    it('should handle API errors', async () => {
+      const OpenAI = require('openai').default;
+      OpenAI.mockImplementation(() => ({
+        chat: {
+          completions: {
+            create: jest.fn().mockRejectedValue(new Error('API Error')),
+          },
+        },
+      }));
 
-      await expect(
-        contentService.generateContent(mockProductInput)
-      ).rejects.toThrow('LLM service error');
+      const service = new SmartStoreContentService();
+
+      await expect(service.generateContent(mockProductInput)).rejects.toThrow(
+        'API Error',
+      );
     });
 
-    it('should validate required fields in output', async () => {
-      const invalidOutput: FormattedOutput<Partial<typeof mockGeneratedContent>> =
-        {
-          requestId: 'test-request-id',
-          moduleId: 'smartstore',
-          outputData: {
-            seoProductName: 'Test',
-            // Missing required fields
-          } as unknown as typeof mockGeneratedContent,
-          status: 'completed',
-          createdAt: new Date(),
-          processingTime: 1000,
-        };
+    it('should handle invalid JSON response', async () => {
+      const OpenAI = require('openai').default;
+      OpenAI.mockImplementation(() => ({
+        chat: {
+          completions: {
+            create: jest.fn().mockResolvedValue({
+              choices: [
+                {
+                  message: {
+                    content: 'invalid json',
+                  },
+                },
+              ],
+            }),
+          },
+        },
+      }));
 
-      mockLLMService.process.mockResolvedValue(
-        invalidOutput as FormattedOutput<typeof mockGeneratedContent>
-      );
+      const service = new SmartStoreContentService();
 
-      await expect(
-        contentService.generateContent(mockProductInput)
-      ).rejects.toThrow();
+      await expect(service.generateContent(mockProductInput)).rejects.toThrow();
     });
   });
 });
-

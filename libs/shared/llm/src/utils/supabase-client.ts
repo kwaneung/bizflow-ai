@@ -30,7 +30,7 @@ class SupabaseClient {
 
     if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error(
-        'Supabase environment variables are not set. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY'
+        'Supabase environment variables are not set. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY',
       );
     }
 
@@ -47,7 +47,7 @@ class SupabaseClient {
    */
   async loadPromptTemplate(
     templateId: string,
-    version?: string
+    version?: string,
   ): Promise<PromptTemplate | null> {
     const client = this.getClient();
     if (!client) {
@@ -108,7 +108,7 @@ class SupabaseClient {
     requestId: string,
     moduleId: string,
     inputData: unknown,
-    promptTemplateId: string
+    promptTemplateId: string,
   ): Promise<string> {
     const client = this.getClient();
     if (!client) {
@@ -143,9 +143,13 @@ class SupabaseClient {
    */
   async updateLLMRequestStatus(
     requestId: string,
-    status: 'pending' | 'processing' | 'completed' | 'failed'
+    status: 'pending' | 'processing' | 'completed' | 'failed',
   ): Promise<void> {
     const client = this.getClient();
+    if (!client) {
+      // In test environment, skip DB operation
+      return;
+    }
 
     const { error } = await client
       .from('llm_requests')
@@ -171,9 +175,13 @@ class SupabaseClient {
       model: string;
       tokensUsed: number;
       latencyMs: number;
-    }
+    },
   ): Promise<void> {
     const client = this.getClient();
+    if (!client) {
+      // In test environment, skip DB operation
+      return;
+    }
 
     const { error } = await client.from('llm_responses').insert({
       request_id: requestId,
@@ -205,9 +213,13 @@ class SupabaseClient {
     metadata: {
       processingTime: number;
       model: string;
-    }
+    },
   ): Promise<void> {
     const client = this.getClient();
+    if (!client) {
+      // In test environment, skip DB operation
+      return;
+    }
 
     const { error } = await client.from('formatted_outputs').insert({
       request_id: requestId,
@@ -237,9 +249,13 @@ class SupabaseClient {
       message: string;
       technicalDetails?: Record<string, unknown>;
       recoverySuggestions: string[];
-    }
+    },
   ): Promise<void> {
     const client = this.getClient();
+    if (!client) {
+      // In test environment, skip DB operation
+      return;
+    }
 
     const { error } = await client.from('error_contexts').insert({
       request_id: requestId,
@@ -258,4 +274,3 @@ class SupabaseClient {
 
 // Export singleton instance
 export const supabaseClient = new SupabaseClient();
-
