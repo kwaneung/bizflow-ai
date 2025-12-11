@@ -10,7 +10,7 @@ import type { Output } from './output';
  * @example
  * ```typescript
  * const value: unknown = {
- *   moduleId: 'smartstore',
+ *   moduleId: 'ecommerce',
  *   data: { productName: 'Product' },
  * };
  *
@@ -80,7 +80,7 @@ export function isInput<T = unknown>(value: unknown): value is Input<T> {
  * @example
  * ```typescript
  * const value: unknown = {
- *   moduleId: 'smartstore',
+ *   moduleId: 'ecommerce',
  *   data: { result: 'Result' },
  *   format: 'json',
  * };
@@ -130,7 +130,10 @@ export function isOutput<T = unknown>(value: unknown): value is Output<T> {
     const metadata = obj.metadata as Record<string, unknown>;
 
     // Validate required metadata fields if present
-    if (metadata.requestId !== undefined && typeof metadata.requestId !== 'string') {
+    if (
+      metadata.requestId !== undefined &&
+      typeof metadata.requestId !== 'string'
+    ) {
       return false;
     }
 
@@ -148,4 +151,3 @@ export function isOutput<T = unknown>(value: unknown): value is Output<T> {
 
   return true;
 }
-

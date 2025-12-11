@@ -7,19 +7,20 @@ AI 기반 멀티 도메인 콘텐츠 생성 SaaS 플랫폼
 BizFlow AI는 다양한 비즈니스 도메인을 위한 AI 콘텐츠 생성 플랫폼입니다.
 
 ### 지원 도메인
-- **SmartStore** - 네이버 스마트스토어 상품 콘텐츠 생성
+
+- **이커머스** - 온라인 쇼핑몰 상품 마케팅 콘텐츠 생성
 - **부동산** (예정) - 부동산 매물 설명 생성
 - **PT 트레이너** (예정) - 운동 프로그램 콘텐츠 생성
 
 ## 🛠️ 기술 스택
 
-| 분류 | 기술 |
-|------|------|
+| 분류         | 기술                             |
+| ------------ | -------------------------------- |
 | **Frontend** | Next.js 16, React 19, TypeScript |
-| **Styling** | Tailwind CSS, shadcn-ui |
-| **Backend** | Supabase (PostgreSQL) |
-| **AI** | OpenAI API |
-| **Infra** | Vercel, Nx Monorepo |
+| **Styling**  | Tailwind CSS, shadcn-ui          |
+| **Backend**  | Supabase (PostgreSQL)            |
+| **AI**       | OpenAI API                       |
+| **Infra**    | Vercel, Nx Monorepo              |
 
 ## 📁 프로젝트 구조
 
@@ -33,7 +34,7 @@ bizflow-ai/
 │       ├── llm/          # LLM 서비스
 │       └── ui/           # shadcn-ui 디자인 시스템
 ├── modules/
-│   └── smartstore/       # SmartStore 도메인 모듈
+│   └── ecommerce/        # 이커머스 도메인 모듈
 ├── supabase/             # DB 마이그레이션
 ├── specs/                # 기술 명세
 └── docs/                 # 문서
@@ -42,6 +43,7 @@ bizflow-ai/
 ## 🚀 시작하기
 
 ### 요구사항
+
 - Node.js 24+
 - pnpm 10+
 
@@ -76,4 +78,3 @@ OPENAI_API_KEY=your_openai_api_key
 ## 📝 라이선스
 
 Private
-

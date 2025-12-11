@@ -5,14 +5,14 @@
  *
  * @example
  * ```typescript
- * type SmartStoreOutput = Output<{
+ * type EcommerceOutput = Output<{
  *   seoProductName: string;
  *   summary1Line: string;
  *   detailedDescription: string;
  * }>;
  *
- * const output: SmartStoreOutput = {
- *   moduleId: 'smartstore',
+ * const output: EcommerceOutput = {
+ *   moduleId: 'ecommerce',
  *   data: {
  *     seoProductName: 'SEO Optimized Name',
  *     summary1Line: 'One line summary',
@@ -24,7 +24,7 @@
  */
 export interface Output<T> {
   /**
-   * Domain module identifier (e.g., "smartstore", "realestate", "pt")
+   * Domain module identifier (e.g., "ecommerce", "realestate", "pt")
    */
   moduleId: string;
 
@@ -58,4 +58,3 @@ export interface Output<T> {
     model: string;
   };
 }
-

@@ -5,14 +5,14 @@
  *
  * @example
  * ```typescript
- * type SmartStoreInput = Input<{
+ * type EcommerceInput = Input<{
  *   productName: string;
  *   description: string;
  *   price: number;
  * }>;
  *
- * const input: SmartStoreInput = {
- *   moduleId: 'smartstore',
+ * const input: EcommerceInput = {
+ *   moduleId: 'ecommerce',
  *   data: {
  *     productName: 'Product Name',
  *     description: 'Product Description',
@@ -23,7 +23,7 @@
  */
 export interface Input<T> {
   /**
-   * Domain module identifier (e.g., "smartstore", "realestate", "pt")
+   * Domain module identifier (e.g., "ecommerce", "realestate", "pt")
    */
   moduleId: string;
 
@@ -52,4 +52,3 @@ export interface Input<T> {
     timestamp?: Date;
   };
 }
-

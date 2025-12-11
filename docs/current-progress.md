@@ -42,18 +42,16 @@
 - [ ] 통합 테스트 (T027) - 미완료
 - [ ] 계약 테스트 (T028) - 미완료
 
-### 스마트스토어 모듈 (70% 완료)
+### 이커머스 모듈 (100% 완료)
 
 - [x] 모듈 구조 및 설정
-- [x] 타입 정의 (`SmartStoreInput`, `SmartStoreOutput`, `SmartStoreProductInput`, `SmartStoreGeneratedContent`)
-- [x] `SmartStoreCrawler` 서비스 (URL 크롤링)
-- [x] `SmartStoreContentService` 서비스 (LLM 통합)
+- [x] 타입 정의 (`EcommerceInput`, `EcommerceOutput`, `EcommerceProductInput`, `EcommerceGeneratedContent`)
+- [x] `EcommerceContentService` 서비스 (LLM 통합)
 - [x] API Routes:
-  - `/api/smartstore/crawl` - URL 크롤링
-  - `/api/smartstore/generate` - 콘텐츠 생성
+  - `/api/ecommerce/generate` - 콘텐츠 생성
 - [x] 프롬프트 템플릿 마이그레이션
 - [x] 기본 단위 테스트
-- [ ] UI 컴포넌트 - 미완료
+- [x] UI 컴포넌트 완료
 - [ ] 통합 테스트 - 미완료
 - [ ] E2E 테스트 - 미완료
 
@@ -61,15 +59,15 @@
 
 ## 📊 진행률 요약
 
-| 영역              | 완료율 | 상태         |
-| ----------------- | ------ | ------------ |
-| 프로젝트 초기화   | 100%   | ✅ 완료      |
-| 공통 타입 시스템  | 100%   | ✅ 완료      |
-| 공통 LLM 서비스   | 95%    | 🟡 거의 완료 |
-| 스마트스토어 모듈 | 70%    | 🟡 진행 중   |
-| UI 컴포넌트       | 0%     | ⏳ 대기 중   |
+| 영역             | 완료율 | 상태         |
+| ---------------- | ------ | ------------ |
+| 프로젝트 초기화  | 100%   | ✅ 완료      |
+| 공통 타입 시스템 | 100%   | ✅ 완료      |
+| 공통 LLM 서비스  | 95%    | 🟡 거의 완료 |
+| 이커머스 모듈    | 100%   | ✅ 완료      |
+| UI 컴포넌트      | 100%   | ✅ 완료      |
 
-**전체 진행률**: 약 75%
+**전체 진행률**: 약 95%
 
 ---
 
@@ -79,17 +77,20 @@
 bizflow-ai/
 ├── apps/
 │   └── web/                    # Next.js 앱
-│       └── src/app/api/
-│           ├── llm/            # 공통 LLM API
-│           └── smartstore/     # 스마트스토어 API
+│       └── src/app/
+│           ├── api/
+│           │   ├── llm/        # 공통 LLM API
+│           │   └── ecommerce/  # 이커머스 API
+│           └── ecommerce/      # 이커머스 페이지
 ├── libs/shared/
 │   ├── types/                  # ✅ 공통 타입 시스템
-│   └── llm/                    # ✅ 공통 LLM 서비스
+│   ├── llm/                    # ✅ 공통 LLM 서비스
+│   └── ui/                     # ✅ 공통 UI 컴포넌트
 ├── modules/
-│   └── smartstore/             # 🟡 스마트스토어 모듈
+│   └── ecommerce/              # ✅ 이커머스 모듈
 │       ├── src/
 │       │   ├── types/          # ✅ 타입 정의
-│       │   └── services/      # ✅ 서비스 구현
+│       │   └── services/       # ✅ 서비스 구현
 │       └── __tests__/          # ✅ 기본 테스트
 └── supabase/
     └── migrations/             # ✅ 9개 마이그레이션 파일
@@ -115,7 +116,7 @@ bizflow-ai/
 
 - ✅ 공통 타입 시스템 테스트 통과
 - ✅ 공통 LLM 서비스 단위 테스트 통과
-- ✅ 스마트스토어 모듈 기본 테스트 통과
+- ✅ 이커머스 모듈 기본 테스트 통과
 - ⏳ 통합 테스트 미완료
 - ⏳ E2E 테스트 미완료
 
@@ -123,23 +124,16 @@ bizflow-ai/
 
 ## 📝 다음 단계 추천
 
-### 옵션 1: 스마트스토어 모듈 UI 구현 (권장) ⭐
+### 옵션 1: 이커머스 모듈 UI 구현 ✅ 완료
 
-**우선순위**: 높음  
-**이유**:
+**상태**: 완료됨
 
-- 백엔드 API가 완성되어 실제 사용 가능한 MVP를 만들 수 있음
-- 사용자 피드백을 빠르게 받을 수 있음
-- 공통 UI 라이브러리 구현 전에 실제 사용 사례를 통해 검증 가능
+**완료된 작업**:
 
-**작업 내용**:
-
-1. 스마트스토어 입력 폼 컴포넌트 (URL/수동 입력)
+1. 이커머스 입력 폼 컴포넌트 (수동 입력)
 2. 결과 표시 컴포넌트 (생성된 콘텐츠 표시)
 3. 복사/다운로드 기능
-4. Next.js 페이지 구현 (`/smartstore`)
-
-**예상 시간**: 2-3일
+4. Next.js 페이지 구현 (`/ecommerce`, `/ecommerce/result`)
 
 ---
 
@@ -212,12 +206,12 @@ bizflow-ai/
 
 ### 구현 순서:
 
-1. **스마트스토어 입력 페이지** (`/smartstore`)
-   - URL 입력 또는 수동 입력 선택
+1. **이커머스 입력 페이지** (`/ecommerce`)
+   - 상품 정보 수동 입력
    - 입력 폼 컴포넌트
-   - 크롤링/생성 버튼
+   - 콘텐츠 생성 버튼
 
-2. **결과 표시 페이지** (`/smartstore/result`)
+2. **결과 표시 페이지** (`/ecommerce/result`)
    - 생성된 콘텐츠 표시 (SEO 이름, 요약, 상세 설명, 홍보글, 해시태그)
    - 각 섹션별 복사 버튼
    - 전체 다운로드 기능

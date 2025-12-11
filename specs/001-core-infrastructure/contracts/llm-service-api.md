@@ -30,9 +30,10 @@ Process a module-specific input through LLM and return formatted output.
 **Endpoint**: `POST /api/llm/process`
 
 **Request Body**:
+
 ```typescript
 {
-  moduleId: string;           // Domain module identifier (e.g., "smartstore")
+  moduleId: string;           // Domain module identifier (e.g., "ecommerce")
   inputData: object;          // Module-specific input data
   promptTemplateId: string;   // Prompt template identifier
   promptTemplateVersion?: string; // Optional: specific version, defaults to latest active
@@ -42,36 +43,40 @@ Process a module-specific input through LLM and return formatted output.
 ```
 
 **Response** (200 OK):
+
 ```typescript
 {
-  requestId: string;          // UUID of the LLM request
-  output: {                   // Formatted output
-    data: object;             // Module-specific output data
-    format: string;           // Output format: "json" | "text" | "markdown" | "html"
+  requestId: string; // UUID of the LLM request
+  output: {
+    // Formatted output
+    data: object; // Module-specific output data
+    format: string; // Output format: "json" | "text" | "markdown" | "html"
     metadata: {
       requestId: string;
       processingTime: number; // Milliseconds
-      model: string;          // LLM model used
-    };
-  };
-  status: "completed";
+      model: string; // LLM model used
+    }
+  }
+  status: 'completed';
 }
 ```
 
 **Error Responses**:
 
 - **400 Bad Request**: Invalid input data or missing required fields
+
   ```typescript
   {
     error: {
-      code: "INVALID_INPUT";
+      code: 'INVALID_INPUT';
       message: string;
       details: object; // Validation errors
-    };
+    }
   }
   ```
 
 - **429 Too Many Requests**: Rate limit exceeded
+
   ```typescript
   {
     error: {
@@ -103,6 +108,7 @@ Get the status of an LLM request.
 **Endpoint**: `GET /api/llm/requests/:requestId`
 
 **Response** (200 OK):
+
 ```typescript
 {
   requestId: string;
@@ -124,9 +130,9 @@ Get the status of an LLM request.
   ```typescript
   {
     error: {
-      code: "REQUEST_NOT_FOUND";
+      code: 'REQUEST_NOT_FOUND';
       message: string;
-    };
+    }
   }
   ```
 
@@ -139,10 +145,11 @@ Cancel a pending or processing request.
 **Endpoint**: `DELETE /api/llm/requests/:requestId`
 
 **Response** (200 OK):
+
 ```typescript
 {
   requestId: string;
-  status: "cancelled";
+  status: 'cancelled';
   cancelledAt: string; // ISO 8601 timestamp
 }
 ```
@@ -150,12 +157,13 @@ Cancel a pending or processing request.
 **Error Responses**:
 
 - **400 Bad Request**: Request cannot be cancelled (already completed or failed)
+
   ```typescript
   {
     error: {
-      code: "CANNOT_CANCEL";
+      code: 'CANNOT_CANCEL';
       message: string;
-    };
+    }
   }
   ```
 
@@ -170,6 +178,7 @@ List LLM requests for a module (with filtering and pagination).
 **Endpoint**: `GET /api/llm/requests`
 
 **Query Parameters**:
+
 - `moduleId` (required): Domain module identifier
 - `status` (optional): Filter by status
 - `limit` (optional): Number of results (default: 20, max: 100)
@@ -178,6 +187,7 @@ List LLM requests for a module (with filtering and pagination).
 - `sortOrder` (optional): "asc" | "desc" (default: "desc")
 
 **Response** (200 OK):
+
 ```typescript
 {
   requests: Array<{
@@ -192,7 +202,7 @@ List LLM requests for a module (with filtering and pagination).
     limit: number;
     offset: number;
     hasMore: boolean;
-  };
+  }
 }
 ```
 
@@ -205,6 +215,7 @@ Get current rate limit status for the authenticated user/module.
 **Endpoint**: `GET /api/llm/rate-limit/status`
 
 **Response** (200 OK):
+
 ```typescript
 {
   provider: string; // LLM provider (e.g., "openai")
@@ -246,6 +257,7 @@ Rate limiting is applied per LLM API provider account. When rate limits are exce
 2. If queue is disabled: Request is rejected with 429 status
 
 Rate limit headers are included in responses:
+
 - `X-RateLimit-Limit`: Maximum requests per window
 - `X-RateLimit-Remaining`: Remaining requests in current window
 - `X-RateLimit-Reset`: Timestamp when window resets
@@ -254,25 +266,27 @@ Rate limit headers are included in responses:
 
 ## Request/Response Examples
 
-### Example: Process SmartStore Product Content Request
+### Example: Process Ecommerce Product Content Request
 
 **Request**:
+
 ```json
 POST /api/llm/process
 {
-  "moduleId": "smartstore",
+  "moduleId": "ecommerce",
   "inputData": {
     "productName": "Wireless Bluetooth Headphones",
     "description": "High-quality wireless headphones with noise cancellation",
     "price": 99000,
     "options": ["Black", "White"]
   },
-  "promptTemplateId": "smartstore-product-content",
+  "promptTemplateId": "ecommerce-product-content",
   "priority": 1
 }
 ```
 
 **Response**:
+
 ```json
 {
   "requestId": "550e8400-e29b-41d4-a716-446655440000",
@@ -302,6 +316,7 @@ POST /api/llm/process
 ## Versioning
 
 API versioning is handled via URL path:
+
 - Current version: `/api/llm/v1/...`
 - Future versions: `/api/llm/v2/...`
 
@@ -312,4 +327,3 @@ Breaking changes require a new version. Non-breaking changes (new optional) are 
 ## OpenAPI Specification
 
 Full OpenAPI 3.0 specification available at: `/api/llm/openapi.json`
-

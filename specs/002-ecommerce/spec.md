@@ -1,23 +1,23 @@
-# Feature Specification: SmartStore Module
+# Feature Specification: Ecommerce Module
 
-**Feature Branch**: `002-smartstore`  
+**Feature Branch**: `002-ecommerce`  
 **Created**: 2025-12-10  
 **Status**: Draft  
-**Input**: User description: "SmartStore Module: For online shopping mall operators (SmartStore). Input: Product link from Naver SmartStore OR manual entry (product name + description + options + optional image upload). Process: URL crawling → LLM processing → Output generation. Output: SEO-optimized product name, product summaries (1-line/3-line/blog format), detailed page description, Instagram/blog promotional posts, hashtag recommendations. This module will use the core infrastructure shared libraries."
+**Input**: User description: "Ecommerce Module: For online shopping mall operators. Input: Product link from online store OR manual entry (product name + description + options + optional image upload). Process: URL crawling → LLM processing → Output generation. Output: SEO-optimized product name, product summaries (1-line/3-line/blog format), detailed page description, Instagram/blog promotional posts, hashtag recommendations. This module will use the core infrastructure shared libraries."
 
 ## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Shopping Mall Operator Generates Product Content from URL (Priority: P1)
 
-An online shopping mall operator wants to quickly generate SEO-optimized product content by simply providing a Naver SmartStore product URL. The system crawls the product page, extracts product information, processes it through LLM, and generates all necessary marketing content.
+An online shopping mall operator wants to quickly generate SEO-optimized product content by simply providing a product URL. The system crawls the product page, extracts product information, processes it through LLM, and generates all necessary marketing content.
 
 **Why this priority**: URL-based input is the primary use case that provides the most value with minimal effort. This enables operators to generate content for existing products quickly without manual data entry.
 
-**Independent Test**: Can be fully tested by providing a valid Naver SmartStore product URL and verifying that all output formats (SEO product name, summaries, detailed description, promotional posts, hashtags) are generated correctly. This delivers immediate value by automating content generation for existing products.
+**Independent Test**: Can be fully tested by providing a valid product URL and verifying that all output formats (SEO product name, summaries, detailed description, promotional posts, hashtags) are generated correctly. This delivers immediate value by automating content generation for existing products.
 
 **Acceptance Scenarios**:
 
-1. **Given** a shopping mall operator has a Naver SmartStore product URL, **When** they submit the URL, **Then** the system crawls the page, extracts product information, and generates all content formats
+1. **Given** a shopping mall operator has a product URL, **When** they submit the URL, **Then** the system crawls the page, extracts product information, and generates all content formats
 2. **Given** a product URL is invalid or inaccessible, **When** the operator submits the URL, **Then** the system provides a clear error message and suggests manual entry as an alternative
 3. **Given** the crawled product information is incomplete, **When** the system processes it, **Then** the generated content uses available information and indicates missing details appropriately
 
@@ -25,7 +25,7 @@ An online shopping mall operator wants to quickly generate SEO-optimized product
 
 ### User Story 2 - Shopping Mall Operator Manually Enters Product Information (Priority: P1)
 
-An online shopping mall operator wants to generate product content for a new product that doesn't have a SmartStore listing yet, or wants to customize the input. They manually enter product name, description, options, and optionally upload product images.
+An online shopping mall operator wants to generate product content for a new product that doesn't have an online listing yet, or wants to customize the input. They manually enter product name, description, options, and optionally upload product images.
 
 **Why this priority**: Manual entry is essential for new products and provides flexibility when URL crawling is not possible or desired. This ensures the module works for all product scenarios.
 
@@ -41,7 +41,7 @@ An online shopping mall operator wants to generate product content for a new pro
 
 ### User Story 3 - Shopping Mall Operator Uses Generated Content (Priority: P2)
 
-An operator generates product content and needs to use it in different contexts: updating SmartStore product pages, creating blog posts, posting on Instagram, and optimizing SEO. They can view, copy, download, and customize the generated content.
+An operator generates product content and needs to use it in different contexts: updating product pages, creating blog posts, posting on Instagram, and optimizing SEO. They can view, copy, download, and customize the generated content.
 
 **Why this priority**: While content generation is the core value, usability features like viewing, copying, and downloading are essential for operators to actually use the generated content. This enables practical application of the generated content.
 
@@ -73,8 +73,8 @@ An operator generates content for multiple products and wants to save their work
 
 ### Edge Cases
 
-- What happens when a SmartStore URL points to a product that has been deleted or is no longer available?
-- How does the system handle SmartStore pages with complex product options or variations?
+- What happens when a product URL points to a product that has been deleted or is no longer available?
+- How does the system handle product pages with complex product options or variations?
 - What happens when crawled product images are broken or inaccessible?
 - How does the system handle products with very long descriptions or many options?
 - What happens when LLM processing fails for a specific output format (e.g., hashtags generate but detailed description fails)?
@@ -87,12 +87,12 @@ An operator generates content for multiple products and wants to save their work
 
 ### Functional Requirements
 
-- **FR-001**: System MUST accept Naver SmartStore product URLs as input
-- **FR-002**: System MUST crawl SmartStore product pages and extract product information (name, description, options, images, price)
+- **FR-001**: System MUST accept product URLs as input
+- **FR-002**: System MUST crawl product pages and extract product information (name, description, options, images, price)
 - **FR-003**: System MUST accept manual product entry (name, description, options, optional images)
-- **FR-004**: System MUST validate that URLs are valid Naver SmartStore product pages
+- **FR-004**: System MUST validate that URLs are valid product pages
 - **FR-005**: System MUST validate manual input to ensure required fields are provided
-- **FR-006**: System MUST process product information through LLM using SmartStore-specific prompt templates
+- **FR-006**: System MUST process product information through LLM using ecommerce-specific prompt templates
 - **FR-007**: System MUST generate SEO-optimized product names
 - **FR-008**: System MUST generate product summaries in three formats: 1-line, 3-line, and blog format
 - **FR-009**: System MUST generate detailed product page descriptions
@@ -107,7 +107,7 @@ An operator generates content for multiple products and wants to save their work
 - **FR-018**: System MUST allow operators to view all generated content formats
 - **FR-019**: System MUST allow operators to copy generated content to clipboard
 - **FR-020**: System MUST allow operators to download generated content as files
-- **FR-021**: System MUST format content appropriately for each use case (SmartStore, blog, Instagram)
+- **FR-021**: System MUST format content appropriately for each use case (product page, blog, Instagram)
 - **FR-022**: System MUST preserve product images in generated content when available
 - **FR-023**: System MUST handle products with multiple options or variations
 - **FR-024**: System MUST generate content in Korean language optimized for Korean market
@@ -116,12 +116,12 @@ An operator generates content for multiple products and wants to save their work
 ### Key Entities _(include if feature involves data)_
 
 - **Product Input**: Contains product information from URL crawling or manual entry, including name, description, options, images, price, and metadata
-- **Crawled Product Data**: Represents extracted information from SmartStore product page, including raw HTML content, structured product data, and image URLs
+- **Crawled Product Data**: Represents extracted information from product page, including raw HTML content, structured product data, and image URLs
 - **Generated Content**: Contains all LLM-generated outputs including SEO product name, summaries (1-line/3-line/blog), detailed description, promotional posts (Instagram/blog), and hashtags
 - **Content Format**: Defines the structure and formatting rules for each output type (SEO name, summary, description, promotional post, hashtags)
 - **Product Content Library**: Stores saved product content with metadata (product name, creation date, modification date, associated URLs)
 - **Crawl Result**: Represents the outcome of URL crawling including success status, extracted data, errors, and metadata
-- **LLM Processing Request**: Contains product input data and SmartStore-specific prompt template identifiers for LLM processing
+- **LLM Processing Request**: Contains product input data and ecommerce-specific prompt template identifiers for LLM processing
 - **LLM Processing Response**: Contains generated content for all output formats, processing metadata, and any errors encountered
 
 ## Success Criteria _(mandatory)_
@@ -129,12 +129,12 @@ An operator generates content for multiple products and wants to save their work
 ### Measurable Outcomes
 
 - **SC-001**: Operators can generate complete product content (all formats) in under 2 minutes from URL submission
-- **SC-002**: URL crawling successfully extracts product information for 95% of valid SmartStore product URLs
+- **SC-002**: URL crawling successfully extracts product information for 95% of valid product URLs
 - **SC-003**: Generated content meets SEO best practices for 90% of products (as verified by SEO analysis tools or manual review)
 - **SC-004**: Operators successfully use generated content (copy/download) in 95% of generation sessions
 - **SC-005**: Generated hashtags are relevant and useful for 85% of products (measured by operator feedback or usage)
 - **SC-006**: System handles crawling failures gracefully with clear error messages in 100% of failure cases
-- **SC-007**: Generated content is formatted correctly for each use case (SmartStore, blog, Instagram) in 100% of outputs
+- **SC-007**: Generated content is formatted correctly for each use case (product page, blog, Instagram) in 100% of outputs
 - **SC-008**: Operators can complete manual product entry and content generation in under 3 minutes
 - **SC-009**: Generated promotional posts (Instagram/blog) are engaging and appropriate for 90% of products
 - **SC-010**: System processes products with multiple options or variations correctly in 95% of cases
@@ -146,19 +146,19 @@ An operator generates content for multiple products and wants to save their work
   - Shared type system for input/output interfaces
   - Shared UI components for forms and result displays
   - Shared utilities for error handling and data transformation
-- **External Services**: 
-  - Naver SmartStore product pages (for URL crawling)
+- **External Services**:
+  - Product pages (for URL crawling)
   - LLM API provider (via shared LLM service)
   - Image storage (via Supabase Storage for uploaded images)
 
 ## Assumptions
 
-- Naver SmartStore product pages have consistent structure that can be crawled reliably
-- Product information extracted from SmartStore pages is sufficient for content generation
-- Operators have access to valid SmartStore product URLs or can provide manual product information
+- Product pages have consistent structure that can be crawled reliably
+- Product information extracted from pages is sufficient for content generation
+- Operators have access to valid product URLs or can provide manual product information
 - Generated content will be primarily in Korean language for Korean market
-- Product images uploaded manually or extracted from SmartStore are appropriate for promotional use
+- Product images uploaded manually or extracted from pages are appropriate for promotional use
 - LLM API provider supports Korean language content generation effectively
 - Operators understand SEO best practices or will learn through using generated content
-- SmartStore product pages remain accessible during crawling operations
+- Product pages remain accessible during crawling operations
 - Generated content quality improves with more complete product information provided

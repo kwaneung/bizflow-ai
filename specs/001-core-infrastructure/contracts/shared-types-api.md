@@ -27,10 +27,11 @@ interface Input<T> {
 ```
 
 **Usage**:
+
 ```typescript
 import { Input } from '@bizflow/shared/types';
 
-type SmartStoreInput = Input<{
+type EcommerceInput = Input<{
   productName: string;
   description: string;
   price: number;
@@ -58,10 +59,11 @@ interface Output<T> {
 ```
 
 **Usage**:
+
 ```typescript
 import { Output } from '@bizflow/shared/types';
 
-type SmartStoreOutput = Output<{
+type EcommerceOutput = Output<{
   seoProductName: string;
   summary1Line: string;
   summary3Line: string;
@@ -135,7 +137,13 @@ Type for error information.
 
 ```typescript
 interface ErrorContext {
-  type: 'validation' | 'network' | 'api' | 'parsing' | 'formatting' | 'rate-limit';
+  type:
+    | 'validation'
+    | 'network'
+    | 'api'
+    | 'parsing'
+    | 'formatting'
+    | 'rate-limit';
   code: string;
   message: string;
   technicalDetails?: Record<string, unknown>;
@@ -174,13 +182,13 @@ function isOutput<T>(value: unknown): value is Output<T>;
 Extract input type for a module.
 
 ```typescript
-type ModuleInput<TModule extends string> = TModule extends 'smartstore'
-  ? SmartStoreInput
+type ModuleInput<TModule extends string> = TModule extends 'ecommerce'
+  ? EcommerceInput
   : TModule extends 'realestate'
-  ? RealEstateInput
-  : TModule extends 'pt'
-  ? PTInput
-  : never;
+    ? RealEstateInput
+    : TModule extends 'pt'
+      ? PTInput
+      : never;
 ```
 
 ---
@@ -190,13 +198,13 @@ type ModuleInput<TModule extends string> = TModule extends 'smartstore'
 Extract output type for a module.
 
 ```typescript
-type ModuleOutput<TModule extends string> = TModule extends 'smartstore'
-  ? SmartStoreOutput
+type ModuleOutput<TModule extends string> = TModule extends 'ecommerce'
+  ? EcommerceOutput
   : TModule extends 'realestate'
-  ? RealEstateOutput
-  : TModule extends 'pt'
-  ? PTOutput
-  : never;
+    ? RealEstateOutput
+    : TModule extends 'pt'
+      ? PTOutput
+      : never;
 ```
 
 ---
@@ -206,7 +214,14 @@ type ModuleOutput<TModule extends string> = TModule extends 'smartstore'
 ```typescript
 // libs/shared/types/src/index.ts
 
-export type { Input, Output, LLMRequest, LLMResponse, FormattedOutput, ErrorContext };
+export type {
+  Input,
+  Output,
+  LLMRequest,
+  LLMResponse,
+  FormattedOutput,
+  ErrorContext,
+};
 export { isInput, isOutput };
 export type { ModuleInput, ModuleOutput };
 ```
@@ -218,17 +233,17 @@ export type { ModuleInput, ModuleOutput };
 Domain modules import and use these types:
 
 ```typescript
-// modules/smartstore/src/types.ts
+// modules/ecommerce/src/types.ts
 import { Input, Output } from '@bizflow/shared/types';
 
-export interface SmartStoreProductInput {
+export interface EcommerceProductInput {
   productName: string;
   description: string;
   price: number;
   options: string[];
 }
 
-export interface SmartStoreProductOutput {
+export interface EcommerceProductOutput {
   seoProductName: string;
   summary1Line: string;
   summary3Line: string;
@@ -238,8 +253,8 @@ export interface SmartStoreProductOutput {
   hashtags: string[];
 }
 
-export type SmartStoreInput = Input<SmartStoreProductInput>;
-export type SmartStoreOutput = Output<SmartStoreProductOutput>;
+export type EcommerceInput = Input<EcommerceProductInput>;
+export type EcommerceOutput = Output<EcommerceProductOutput>;
 ```
 
 ---
@@ -249,4 +264,3 @@ export type SmartStoreOutput = Output<SmartStoreProductOutput>;
 1. **Compile-time**: TypeScript ensures type compatibility
 2. **Runtime**: Zod schemas validate data at runtime
 3. **Schema Generation**: TypeScript types generated from Zod schemas ensure consistency
-

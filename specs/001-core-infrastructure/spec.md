@@ -3,13 +3,13 @@
 **Feature Branch**: `001-core-infrastructure`  
 **Created**: 2025-12-10  
 **Status**: Draft  
-**Input**: User description: "Build BizFlow AI Core Infrastructure: Shared LLM service for all domain modules, common type system with Input/Output interfaces, reusable UI components (input forms, result displays, save/download), common utilities, error handling, and rate limiting. This foundation will be used by smartstore, realestate, and pt modules."
+**Input**: User description: "Build BizFlow AI Core Infrastructure: Shared LLM service for all domain modules, common type system with Input/Output interfaces, reusable UI components (input forms, result displays, save/download), common utilities, error handling, and rate limiting. This foundation will be used by ecommerce, realestate, and pt modules."
 
 ## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Domain Module Developer Uses Shared LLM Service (Priority: P1)
 
-A developer building a new domain module (e.g., smartstore, realestate, pt) needs to integrate LLM functionality without implementing LLM API calls, error handling, or rate limiting from scratch. They use the shared LLM service to process module-specific inputs and receive formatted outputs.
+A developer building a new domain module (e.g., ecommerce, realestate, pt) needs to integrate LLM functionality without implementing LLM API calls, error handling, or rate limiting from scratch. They use the shared LLM service to process module-specific inputs and receive formatted outputs.
 
 **Why this priority**: The shared LLM service is the foundation that enables all domain modules to function. Without it, each module would need to duplicate LLM integration logic, violating the shared component reusability principle.
 
@@ -108,7 +108,7 @@ A system administrator needs to configure rate limiting for LLM API calls to pre
 - **FR-021**: System MUST enable independent building and testing of shared libraries
 - **FR-022**: System MUST maintain clear dependency boundaries between shared libraries and domain modules
 - **FR-023**: System MUST support versioning of shared libraries to manage breaking changes
-- **FR-024**: System MUST enable code sharing across multiple domain services (smartstore, realestate, pt) within a single repository
+- **FR-024**: System MUST enable code sharing across multiple domain services (ecommerce, realestate, pt) within a single repository
 - **FR-025**: System MUST allow changes to shared libraries to be tested against all dependent domain modules automatically
 
 ### Key Entities _(include if feature involves data)_
@@ -142,7 +142,7 @@ A system administrator needs to configure rate limiting for LLM API calls to pre
 
 ## Monorepo Structure Requirements
 
-The core infrastructure MUST be organized to support multiple domain services (smartstore, realestate, pt) within a single repository while maximizing code reuse:
+The core infrastructure MUST be organized to support multiple domain services (ecommerce, realestate, pt) within a single repository while maximizing code reuse:
 
 - **Shared Library Organization**: Shared components MUST be organized as independent libraries that can be imported by any domain module
 - **Dependency Management**: Domain modules MUST depend on shared libraries, but shared libraries MUST NOT depend on domain modules
@@ -162,6 +162,6 @@ The core infrastructure MUST be organized to support multiple domain services (s
 - Type system will be enforced at build/compile time using TypeScript
 - Logging and monitoring infrastructure exists or will be implemented separately
 - LLM API responses will generally be text-based, with structured data returned as JSON strings
-- Multiple domain services (smartstore, realestate, pt) will be developed within the same monorepo
+- Multiple domain services (ecommerce, realestate, pt) will be developed within the same monorepo
 - Shared libraries will be used by all domain modules to ensure consistency and reduce duplication
 - Monorepo tooling will handle dependency management, build orchestration, and testing across libraries and modules

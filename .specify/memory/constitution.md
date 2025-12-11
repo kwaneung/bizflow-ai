@@ -14,7 +14,7 @@ Sync Impact Report:
 
 ### I. Module-First Architecture
 
-Every business domain (smartstore, realestate, pt, etc.) MUST be implemented as an independent, self-contained module within the Nx monorepo. Modules MUST follow the pattern: Input → LLM Processing → Output. Each module MUST be independently testable, deployable, and maintainable. Clear module boundaries required - no cross-module dependencies except through shared libraries.
+Every business domain (ecommerce, realestate, pt, etc.) MUST be implemented as an independent, self-contained module within the Nx monorepo. Modules MUST follow the pattern: Input → LLM Processing → Output. Each module MUST be independently testable, deployable, and maintainable. Clear module boundaries required - no cross-module dependencies except through shared libraries.
 
 ### II. Shared Component Reusability
 
@@ -34,7 +34,7 @@ All LLM interactions MUST follow a consistent pattern: Input validation → Prom
 
 ### VI. Progressive Module Development
 
-Modules MUST be developed in priority order (P1: smartstore, P2: realestate, P3: pt). Each module MUST be fully functional and tested before moving to the next priority. MVP scope MUST be defined before implementation begins.
+Modules MUST be developed in priority order (P1: ecommerce, P2: realestate, P3: pt). Each module MUST be fully functional and tested before moving to the next priority. MVP scope MUST be defined before implementation begins.
 
 ### VII. Nx Monorepo Standards
 

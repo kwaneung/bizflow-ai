@@ -54,7 +54,7 @@ RATE_LIMIT_REQUESTS_PER_MINUTE=60
 ### Step 1: Define Your Module's Input/Output Types
 
 ```typescript
-// modules/smartstore/src/types.ts
+// modules/ecommerce/src/types.ts
 import { Input, Output } from '@bizflow/shared/types';
 
 export interface ProductInput {
@@ -74,14 +74,14 @@ export interface ProductOutput {
   hashtags: string[];
 }
 
-export type SmartStoreInput = Input<ProductInput>;
-export type SmartStoreOutput = Output<ProductOutput>;
+export type EcommerceInput = Input<ProductInput>;
+export type EcommerceOutput = Output<ProductOutput>;
 ```
 
 ### Step 2: Create Zod Schemas for Validation
 
 ```typescript
-// modules/smartstore/src/schemas.ts
+// modules/ecommerce/src/schemas.ts
 import { z } from 'zod';
 
 export const productInputSchema = z.object({
@@ -105,9 +105,9 @@ export const productOutputSchema = z.object({
 ### Step 3: Use Shared LLM Service
 
 ```typescript
-// modules/smartstore/src/services/product-content.service.ts
+// modules/ecommerce/src/services/product-content.service.ts
 import { LLMService } from '@bizflow/shared/llm';
-import { SmartStoreInput, SmartStoreOutput } from '../types';
+import { EcommerceInput, EcommerceOutput } from '../types';
 import { productInputSchema, productOutputSchema } from '../schemas';
 
 export class ProductContentService {
@@ -117,15 +117,15 @@ export class ProductContentService {
     this.llmService = new LLMService();
   }
 
-  async generateContent(input: SmartStoreInput): Promise<SmartStoreOutput> {
+  async generateContent(input: EcommerceInput): Promise<EcommerceOutput> {
     // Validate input
     const validatedInput = productInputSchema.parse(input.data);
 
     // Process through LLM service
     const response = await this.llmService.process({
-      moduleId: 'smartstore',
+      moduleId: 'ecommerce',
       inputData: validatedInput,
-      promptTemplateId: 'smartstore-product-content',
+      promptTemplateId: 'ecommerce-product-content',
       promptTemplateVersion: '1.0.0',
     });
 
@@ -133,7 +133,7 @@ export class ProductContentService {
     const validatedOutput = productOutputSchema.parse(response.output.data);
 
     return {
-      moduleId: 'smartstore',
+      moduleId: 'ecommerce',
       data: validatedOutput,
       format: 'json',
       metadata: response.output.metadata,
@@ -145,25 +145,22 @@ export class ProductContentService {
 ### Step 4: Create API Route
 
 ```typescript
-// modules/smartstore/src/app/api/generate-content/route.ts
+// modules/ecommerce/src/app/api/generate-content/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { ProductContentService } from '../../services/product-content.service';
-import { SmartStoreInput } from '../../types';
+import { EcommerceInput } from '../../types';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const input: SmartStoreInput = body;
+    const input: EcommerceInput = body;
 
     const service = new ProductContentService();
     const output = await service.generateContent(input);
 
     return NextResponse.json(output);
   } catch (error) {
-    return NextResponse.json(
-      { error: error.message },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 }
 ```
@@ -171,7 +168,7 @@ export async function POST(request: NextRequest) {
 ### Step 5: Use Shared UI Components
 
 ```typescript
-// modules/smartstore/src/components/product-form.tsx
+// modules/ecommerce/src/components/product-form.tsx
 'use client';
 
 import { BaseForm } from '@bizflow/shared/ui';
@@ -184,7 +181,7 @@ export function ProductForm() {
     const response = await fetch('/api/generate-content', {
       method: 'POST',
       body: JSON.stringify({
-        moduleId: 'smartstore',
+        moduleId: 'ecommerce',
         data: {
           productName: formData.get('productName'),
           description: formData.get('description'),
@@ -214,9 +211,9 @@ export function ProductForm() {
 ### Unit Test Example
 
 ```typescript
-// modules/smartstore/src/services/product-content.service.spec.ts
+// modules/ecommerce/src/services/product-content.service.spec.ts
 import { ProductContentService } from './product-content.service';
-import { SmartStoreInput } from '../types';
+import { EcommerceInput } from '../types';
 
 describe('ProductContentService', () => {
   let service: ProductContentService;
@@ -226,8 +223,8 @@ describe('ProductContentService', () => {
   });
 
   it('should generate content for valid input', async () => {
-    const input: SmartStoreInput = {
-      moduleId: 'smartstore',
+    const input: EcommerceInput = {
+      moduleId: 'ecommerce',
       data: {
         productName: 'Test Product',
         description: 'A test product description',
@@ -238,7 +235,7 @@ describe('ProductContentService', () => {
 
     const output = await service.generateContent(input);
 
-    expect(output.moduleId).toBe('smartstore');
+    expect(output.moduleId).toBe('ecommerce');
     expect(output.data.seoProductName).toBeDefined();
     expect(output.data.hashtags).toBeInstanceOf(Array);
   });
@@ -265,7 +262,7 @@ try {
         // Show validation errors
         break;
       default:
-        // Show generic error
+      // Show generic error
     }
   }
 }
@@ -305,7 +302,7 @@ if (status.remaining === 0) {
 ## Support
 
 For questions or issues:
+
 1. Check the documentation in `specs/001-core-infrastructure/`
 2. Review the Constitution for architectural principles
 3. Consult the research document for best practices
-
