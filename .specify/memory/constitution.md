@@ -1,9 +1,9 @@
 <!--
 Sync Impact Report:
-- Version change: 1.0.0 → 1.0.1
+- Version change: 1.0.1 → 1.0.2
 - Modified principles: None
-- Added sections: None
-- Updated sections: Technology Stack - added pnpm package manager
+- Added sections: Deployment & Infrastructure, CI/CD Pipeline
+- Updated sections: Technology Stack - added deployment platform, backend/DB, CI/CD tools
 - Templates requiring updates: None
 - Follow-up TODOs: None
 -->
@@ -48,6 +48,9 @@ Project structure MUST follow Nx conventions. Apps and libraries MUST be clearly
 - **Package Manager**: pnpm (required for Nx monorepo)
 - **Frontend Framework**: Next.js (App Router)
 - **Language**: TypeScript (strict mode)
+- **Deployment Platform**: Vercel
+- **Backend & Database**: Supabase
+- **CI/CD Pipeline**: GitHub Actions + Nx Cloud + Vercel
 - **Module Structure**: `/modules/{module-name}` pattern
 - **Shared Libraries**: `/libs/shared/{category}` pattern
 
@@ -69,6 +72,28 @@ Each module MUST contain:
 - `libs/shared/forms` - Form components and validation
 - `libs/shared/types` - Shared TypeScript types and interfaces
 - `libs/shared/utils` - Utility functions
+
+### Deployment & Infrastructure
+
+- **Frontend Deployment**: All Next.js applications MUST be deployed to Vercel
+- **Backend Services**: API routes and serverless functions MUST use Supabase for backend services
+- **Database**: All data persistence MUST use Supabase database (PostgreSQL)
+- **Authentication**: User authentication MUST use Supabase Auth
+- **File Storage**: File uploads and storage MUST use Supabase Storage
+- **Environment Variables**: All environment-specific configuration MUST be managed through Vercel environment variables
+
+### CI/CD Pipeline
+
+- **Version Control**: GitHub MUST be used for source code management
+- **Continuous Integration**: GitHub Actions MUST run tests, linting, and type checking on all pull requests
+- **Build Caching**: Nx Cloud MUST be used for distributed build caching and task execution
+- **Deployment**: Vercel MUST automatically deploy on merge to main branch (or configured branch)
+- **Pipeline Stages**:
+  1. GitHub Actions: Run tests, linting, type checking
+  2. Nx Cloud: Cache and distribute build tasks
+  3. Vercel: Build and deploy Next.js applications
+- **Quality Gates**: All CI/CD stages MUST pass before deployment
+- **Rollback**: Vercel deployment history MUST be used for rollback capabilities
 
 ## Development Workflow
 
@@ -112,4 +137,4 @@ Constitution supersedes all other practices. Amendments require:
 
 All PRs/reviews MUST verify compliance with constitution principles. Complexity MUST be justified - simpler alternatives MUST be considered and documented if rejected. Use this constitution as the primary reference for architectural decisions.
 
-**Version**: 1.0.1 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-10
+**Version**: 1.0.2 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-10

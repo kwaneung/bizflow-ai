@@ -1,0 +1,36 @@
+{
+  "name": "bizflow-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BizFlow AI - Multi-domain SaaS platform for AI-powered content generation",
+  "scripts": {
+    "build": "nx build",
+    "test": "nx test",
+    "lint": "nx lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@nx/devkit": "^22.2.0",
+    "@nx/eslint": "^22.2.0",
+    "@nx/jest": "^22.2.0",
+    "@nx/js": "^22.2.0",
+    "@nx/next": "^22.2.0",
+    "@nx/react": "^22.2.0",
+    "@nx/workspace": "^22.2.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.0.0",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "nx": "^22.2.0",
+    "prettier": "^3.2.0",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.0"
+  }
+}
