@@ -10,10 +10,10 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@10.11.0",
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=9.0.0"
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
   },
   "devDependencies": {
     "@nx/devkit": "^22.2.0",
