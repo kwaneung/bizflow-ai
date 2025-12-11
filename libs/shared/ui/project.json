@@ -15,19 +15,6 @@
         "assets": ["libs/shared/ui/*.md"]
       }
     },
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/shared/ui",
-        "main": "libs/shared/ui/src/index.ts",
-        "tsConfig": "libs/shared/ui/tsconfig.lib.json",
-        "project": "libs/shared/ui/package.json",
-        "entryFile": "libs/shared/ui/src/index.ts",
-        "external": ["react", "react-dom", "react/jsx-runtime"],
-        "rollupConfig": "@nx/react:rollup",
-        "compiler": "tsc",
-        "assets": []
-      }
-    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
