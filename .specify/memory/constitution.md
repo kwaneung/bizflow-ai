@@ -47,6 +47,7 @@ Project structure MUST follow Nx conventions. Apps and libraries MUST be clearly
 - **Monorepo**: Nx workspace
 - **Package Manager**: pnpm (required for Nx monorepo)
 - **Frontend Framework**: Next.js (App Router)
+- **UI Component Library**: shadcn/ui (MUST be used for all UI components)
 - **React Compiler**: Enabled (Next.js 16+ experimental feature for performance optimization)
 - **Language**: TypeScript (strict mode)
 - **Deployment Platform**: Vercel
@@ -149,4 +150,12 @@ All PRs/reviews MUST verify compliance with constitution principles. Complexity 
 - **App Router**: All Next.js applications MUST use App Router (not Pages Router)
 - **TypeScript**: Strict mode MUST be enabled
 
-**Version**: 1.0.3 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-11
+### UI Component Standards
+
+- **Component Library**: shadcn/ui MUST be used for all UI components
+- **Styling**: Tailwind CSS MUST be used for styling (shadcn/ui dependency)
+- **Component Location**: shadcn/ui components MUST be installed in `apps/web/src/components/ui/`
+- **Custom Components**: Module-specific components MUST extend shadcn/ui components, not replace them
+- **Accessibility**: All UI components MUST follow shadcn/ui accessibility standards
+
+**Version**: 1.0.4 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-11
