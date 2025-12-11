@@ -52,9 +52,9 @@
 
 ### Tests for Foundational Phase
 
-- [x] T011 [P] Create unit test for Input interface in libs/shared/types/src/__tests__/input.test.ts
-- [x] T012 [P] Create unit test for Output interface in libs/shared/types/src/__tests__/output.test.ts
-- [x] T013 [P] Create unit test for type guards in libs/shared/types/src/__tests__/type-guards.test.ts
+- [x] T011 [P] Create unit test for Input interface in libs/shared/types/src/**tests**/input.test.ts
+- [x] T012 [P] Create unit test for Output interface in libs/shared/types/src/**tests**/output.test.ts
+- [x] T013 [P] Create unit test for type guards in libs/shared/types/src/**tests**/type-guards.test.ts
 
 ### Implementation for Foundational Phase
 
@@ -79,13 +79,13 @@
 
 ### Tests for User Story 1
 
-- [x] T022 [P] [US1] Create unit test for LLMService.process() in libs/shared/llm/src/__tests__/llm-service.test.ts
-- [x] T023 [P] [US1] Create unit test for PromptBuilder in libs/shared/llm/src/__tests__/prompt-builder.test.ts
-- [x] T024 [P] [US1] Create unit test for ResponseParser in libs/shared/llm/src/__tests__/response-parser.test.ts
-- [x] T025 [P] [US1] Create unit test for RateLimiter in libs/shared/llm/src/__tests__/rate-limiter.test.ts
-- [x] T026 [P] [US1] Create unit test for ErrorHandler in libs/shared/llm/src/__tests__/error-handler.test.ts
-- [ ] T027 [US1] Create integration test for LLM service flow in libs/shared/llm/src/__tests__/integration/llm-flow.test.ts
-- [ ] T028 [US1] Create contract test for LLM API endpoint in libs/shared/llm/src/__tests__/contract/api-contract.test.ts
+- [x] T022 [P] [US1] Create unit test for LLMService.process() in libs/shared/llm/src/**tests**/llm-service.test.ts
+- [x] T023 [P] [US1] Create unit test for PromptBuilder in libs/shared/llm/src/**tests**/prompt-builder.test.ts
+- [x] T024 [P] [US1] Create unit test for ResponseParser in libs/shared/llm/src/**tests**/response-parser.test.ts
+- [x] T025 [P] [US1] Create unit test for RateLimiter in libs/shared/llm/src/**tests**/rate-limiter.test.ts
+- [x] T026 [P] [US1] Create unit test for ErrorHandler in libs/shared/llm/src/**tests**/error-handler.test.ts
+- [ ] T027 [US1] Create integration test for LLM service flow in libs/shared/llm/src/**tests**/integration/llm-flow.test.ts
+- [ ] T028 [US1] Create contract test for LLM API endpoint in libs/shared/llm/src/**tests**/contract/api-contract.test.ts
 
 ### Implementation for User Story 1
 
@@ -98,12 +98,12 @@
 - [x] T035 [P] [US1] Implement RateLimiter service in libs/shared/llm/src/services/rate-limiter.ts
 - [x] T036 [P] [US1] Implement ErrorHandler utility in libs/shared/llm/src/utils/error-handler.ts
 - [x] T037 [US1] Implement LLMService main service in libs/shared/llm/src/services/llm-service.ts (depends on T033-T036)
-- [ ] T038 [US1] Create Supabase table for prompt_templates in supabase/migrations/001_prompt_templates.sql
-- [ ] T039 [US1] Create Supabase table for rate_limit_configs in supabase/migrations/002_rate_limit_configs.sql
-- [ ] T040 [US1] Create Supabase table for llm_requests in supabase/migrations/003_llm_requests.sql
-- [ ] T041 [US1] Create Supabase table for llm_responses in supabase/migrations/004_llm_responses.sql
-- [ ] T042 [US1] Create Supabase table for formatted_outputs in supabase/migrations/005_formatted_outputs.sql
-- [ ] T043 [US1] Create Supabase table for error_contexts in supabase/migrations/006_error_contexts.sql
+- [x] T038 [US1] Create Supabase table for prompt_templates in supabase/migrations/001_prompt_templates.sql
+- [x] T039 [US1] Create Supabase table for rate_limit_configs in supabase/migrations/002_rate_limit_configs.sql
+- [x] T040 [US1] Create Supabase table for llm_requests in supabase/migrations/003_llm_requests.sql
+- [x] T041 [US1] Create Supabase table for llm_responses in supabase/migrations/004_llm_responses.sql
+- [x] T042 [US1] Create Supabase table for formatted_outputs in supabase/migrations/005_formatted_outputs.sql
+- [x] T043 [US1] Create Supabase table for error_contexts in supabase/migrations/006_error_contexts.sql
 - [x] T044 [US1] Implement Supabase client integration in libs/shared/llm/src/utils/supabase-client.ts
 - [x] T045 [US1] Create Next.js API route for LLM processing in apps/web/src/app/api/llm/process/route.ts
 - [x] T046 [US1] Create Next.js API route for request status in apps/web/src/app/api/llm/requests/[requestId]/route.ts
@@ -126,9 +126,9 @@
 
 ### Tests for User Story 2
 
-- [ ] T051 [P] [US2] Create unit test for Input schema validation in libs/shared/types/src/__tests__/input-schema.test.ts
-- [ ] T052 [P] [US2] Create unit test for Output schema validation in libs/shared/types/src/__tests__/output-schema.test.ts
-- [ ] T053 [US2] Create integration test for type system with module registration in libs/shared/types/src/__tests__/integration/module-types.test.ts
+- [ ] T051 [P] [US2] Create unit test for Input schema validation in libs/shared/types/src/**tests**/input-schema.test.ts
+- [ ] T052 [P] [US2] Create unit test for Output schema validation in libs/shared/types/src/**tests**/output-schema.test.ts
+- [ ] T053 [US2] Create integration test for type system with module registration in libs/shared/types/src/**tests**/integration/module-types.test.ts
 
 ### Implementation for User Story 2
 
@@ -153,10 +153,10 @@
 
 ### Tests for User Story 3
 
-- [ ] T062 [P] [US3] Create unit test for BaseForm component in libs/shared/ui/src/__tests__/components/input-form/base-form.test.tsx
-- [ ] T063 [P] [US3] Create unit test for ResultDisplay component in libs/shared/ui/src/__tests__/components/result-display/result-display.test.tsx
-- [ ] T064 [P] [US3] Create unit test for SaveDownload component in libs/shared/ui/src/__tests__/components/save-download/save-download.test.tsx
-- [ ] T065 [US3] Create integration test for form submission flow in libs/shared/ui/src/__tests__/integration/form-flow.test.tsx
+- [ ] T062 [P] [US3] Create unit test for BaseForm component in libs/shared/ui/src/**tests**/components/input-form/base-form.test.tsx
+- [ ] T063 [P] [US3] Create unit test for ResultDisplay component in libs/shared/ui/src/**tests**/components/result-display/result-display.test.tsx
+- [ ] T064 [P] [US3] Create unit test for SaveDownload component in libs/shared/ui/src/**tests**/components/save-download/save-download.test.tsx
+- [ ] T065 [US3] Create integration test for form submission flow in libs/shared/ui/src/**tests**/integration/form-flow.test.tsx
 
 ### Implementation for User Story 3
 
@@ -186,8 +186,8 @@
 
 ### Tests for User Story 4
 
-- [ ] T079 [P] [US4] Create unit test for rate limit configuration in libs/shared/llm/src/__tests__/rate-limit-config.test.ts
-- [ ] T080 [US4] Create integration test for rate limit enforcement in libs/shared/llm/src/__tests__/integration/rate-limit-enforcement.test.ts
+- [ ] T079 [P] [US4] Create unit test for rate limit configuration in libs/shared/llm/src/**tests**/rate-limit-config.test.ts
+- [ ] T080 [US4] Create integration test for rate limit enforcement in libs/shared/llm/src/**tests**/integration/rate-limit-enforcement.test.ts
 
 ### Implementation for User Story 4
 
@@ -234,7 +234,7 @@
 
 - [ ] T099 [P] Create comprehensive documentation in docs/shared-libraries.md
 - [ ] T100 [P] Update quickstart.md with actual implementation examples
-- [ ] T101 [P] Add JSDoc comments to all public APIs in libs/shared/*/src/
+- [ ] T101 [P] Add JSDoc comments to all public APIs in libs/shared/\*/src/
 - [ ] T102 [P] Configure ESLint rules for all shared libraries in .eslintrc.json
 - [ ] T103 [P] Configure Prettier formatting in .prettierrc.json
 - [ ] T104 [P] Set up Nx Cloud integration for build caching
@@ -284,7 +284,7 @@
 
 - **Setup Phase**: All tasks marked [P] can run in parallel (T002-T010)
 - **Foundational Phase**: All implementation tasks marked [P] can run in parallel (T015-T021)
-- **User Story 1**: 
+- **User Story 1**:
   - All test tasks can run in parallel (T022-T028)
   - Type definitions can run in parallel (T030-T032)
   - Service implementations can run in parallel (T033-T036)
@@ -394,12 +394,14 @@ With multiple developers:
 ### Suggested MVP Scope
 
 **MVP includes**:
+
 - Phase 1: Setup ✅
 - Phase 2: Foundational ✅
 - Phase 3: User Story 1 (Shared LLM Service) ✅
 - Phase 4: User Story 2 (Complete Type System) ✅
 
 **MVP excludes**:
+
 - User Story 3 (UI Components) - Can be added incrementally
 - User Story 4 (Rate Limiting Admin) - Can use defaults initially
 - Shared Utilities & Forms - Can be added as needed
@@ -421,4 +423,3 @@ With multiple developers:
 - All file paths follow Nx monorepo conventions
 - TypeScript strict mode enforced throughout
 - All shared libraries must be independently buildable and testable
-

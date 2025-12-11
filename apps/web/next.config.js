@@ -10,6 +10,10 @@ const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
+  // Enable React Compiler for performance optimization (Next.js 16+)
+  experimental: {
+    reactCompiler: true,
+  },
 };
 
 const plugins = [

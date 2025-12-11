@@ -47,6 +47,7 @@ Project structure MUST follow Nx conventions. Apps and libraries MUST be clearly
 - **Monorepo**: Nx workspace
 - **Package Manager**: pnpm (required for Nx monorepo)
 - **Frontend Framework**: Next.js (App Router)
+- **React Compiler**: Enabled (Next.js 16+ experimental feature for performance optimization)
 - **Language**: TypeScript (strict mode)
 - **Deployment Platform**: Vercel
 - **Backend & Database**: Supabase
@@ -137,4 +138,15 @@ Constitution supersedes all other practices. Amendments require:
 
 All PRs/reviews MUST verify compliance with constitution principles. Complexity MUST be justified - simpler alternatives MUST be considered and documented if rejected. Use this constitution as the primary reference for architectural decisions.
 
-**Version**: 1.0.2 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-10
+### Next.js Configuration
+
+- **React Compiler**: MUST be enabled in `next.config.js` for all Next.js applications
+  ```javascript
+  experimental: {
+    reactCompiler: true,
+  }
+  ```
+- **App Router**: All Next.js applications MUST use App Router (not Pages Router)
+- **TypeScript**: Strict mode MUST be enabled
+
+**Version**: 1.0.3 | **Ratified**: 2025-12-10 | **Last Amended**: 2025-12-11

@@ -19,7 +19,8 @@
       "@bizflow/shared/llm": ["libs/shared/llm/src/index.ts"],
       "@bizflow/shared/ui": ["libs/shared/ui/src/index.ts"],
       "@bizflow/shared/forms": ["libs/shared/forms/src/index.ts"],
-      "@bizflow/shared/utils": ["libs/shared/utils/src/index.ts"]
+      "@bizflow/shared/utils": ["libs/shared/utils/src/index.ts"],
+      "@bizflow/modules/smartstore": ["modules/smartstore/src/index.ts"]
     },
     "strict": true,
     "esModuleInterop": true,
