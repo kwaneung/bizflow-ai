@@ -146,32 +146,4 @@ export interface SmartStoreOutput extends Output<SmartStoreGeneratedContent> {
   outputData: SmartStoreGeneratedContent;
 }
 
-/**
- * Crawled product data from SmartStore URL
- */
-export interface CrawledProductData {
-  /**
-   * Success status
-   */
-  success: boolean;
-
-  /**
-   * Extracted product information
-   */
-  product?: SmartStoreProductInput;
-
-  /**
-   * Error message if crawling failed
-   */
-  error?: string;
-
-  /**
-   * Crawling metadata
-   */
-  metadata?: {
-    crawledAt: Date;
-    url: string;
-    responseTime: number;
-  };
-}
 

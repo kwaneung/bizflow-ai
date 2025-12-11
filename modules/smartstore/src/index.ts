@@ -2,7 +2,6 @@
  * SmartStore Module
  *
  * This module provides product content generation for Naver SmartStore operators.
- * It supports both URL-based crawling and manual product entry.
  *
  * @module @bizflow/modules/smartstore
  */
@@ -13,12 +12,8 @@ export type {
   SmartStoreOutput,
   SmartStoreProductInput,
   SmartStoreGeneratedContent,
-  CrawledProductData,
 } from './types/smartstore-types';
 
 // Services
-export {
-  SmartStoreCrawler,
-  SmartStoreContentService,
-} from './services';
+export { SmartStoreContentService } from './services';
 

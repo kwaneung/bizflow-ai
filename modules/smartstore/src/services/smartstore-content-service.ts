@@ -1,5 +1,4 @@
-import { LLMService } from '@bizflow/shared/llm';
-import type { LLMRequest } from '@bizflow/shared/llm';
+import OpenAI from 'openai';
 import type {
   SmartStoreProductInput,
   SmartStoreGeneratedContent,
@@ -9,10 +8,16 @@ import type {
  * Service for generating SmartStore product content using LLM.
  */
 export class SmartStoreContentService {
-  private llmService: LLMService;
+  private client: OpenAI;
 
-  constructor(llmService?: LLMService) {
-    this.llmService = llmService || new LLMService();
+  constructor() {
+    const apiKey = process.env.OPENAI_API_KEY || '';
+
+    if (!apiKey) {
+      throw new Error('OPENAI_API_KEY environment variable is not set');
+    }
+
+    this.client = new OpenAI({ apiKey });
   }
 
   /**
@@ -24,83 +29,100 @@ export class SmartStoreContentService {
   async generateContent(
     productInput: SmartStoreProductInput
   ): Promise<SmartStoreGeneratedContent> {
-    // Prepare input data for LLM
-    const inputData = this.prepareInputData(productInput);
+    const prompt = this.buildPrompt(productInput);
 
-    // Create LLM request
-    const request: LLMRequest = {
-      moduleId: 'smartstore',
-      inputData,
-      promptTemplateId: 'smartstore-content-generation',
-      priority: 0,
-      context: {
-        language: 'ko',
-        market: 'korea',
-      },
-    };
+    const response = await this.client.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are a professional marketing content writer specializing in Korean e-commerce products. Always respond with valid JSON only.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      response_format: { type: 'json_object' },
+    });
 
-    // Process through LLM
-    const result = await this.llmService.process<SmartStoreGeneratedContent>(
-      request
-    );
+    const content = response.choices[0]?.message?.content || '{}';
+    
+    // Log raw response for debugging
+    console.log('LLM Response:', content);
+    
+    const parsedContent = JSON.parse(content);
 
-    // Validate and return generated content
-    return this.validateAndFormatOutput(result.outputData);
+    return this.validateAndFormatOutput(parsedContent);
   }
 
   /**
-   * Prepare input data for LLM processing.
-   *
-   * @param productInput - Product input
-   * @returns Formatted input data
+   * Build prompt for content generation.
    */
-  private prepareInputData(
-    productInput: SmartStoreProductInput
-  ): Record<string, unknown> {
-    return {
-      productName: productInput.name,
-      productDescription: productInput.description,
-      productOptions: productInput.options
-        ? JSON.stringify(productInput.options)
-        : undefined,
-      productPrice: productInput.price,
-      productCategory: productInput.category,
-      productImages: productInput.images
-        ? productInput.images.join(', ')
-        : undefined,
-      metadata: productInput.metadata
-        ? JSON.stringify(productInput.metadata)
-        : undefined,
-    };
+  private buildPrompt(productInput: SmartStoreProductInput): string {
+    const priceInfo = productInput.price
+      ? `가격: ${productInput.price.toLocaleString()}원`
+      : '';
+    const categoryInfo = productInput.category
+      ? `카테고리: ${productInput.category}`
+      : '';
+
+    return `당신은 네이버 스마트스토어 상품 마케팅 콘텐츠 전문가입니다.
+
+다음 상품 정보를 바탕으로 SEO 최적화된 마케팅 콘텐츠를 생성해주세요.
+
+## 상품 정보
+- 상품명: ${productInput.name}
+- 상품 설명: ${productInput.description}
+${priceInfo ? `- ${priceInfo}` : ''}
+${categoryInfo ? `- ${categoryInfo}` : ''}
+
+## 생성해야 할 콘텐츠
+
+다음 JSON 형식으로 응답해주세요:
+
+{
+  "seoProductName": "SEO 최적화된 상품명 (검색에 잘 노출되도록, 핵심 키워드 포함)",
+  "summaries": {
+    "oneLine": "한 줄 요약 (50자 이내, 핵심 특징)",
+    "threeLine": "세 줄 요약 (각 줄은 핵심 장점 하나씩)",
+    "blog": "블로그용 요약 (200-300자, 상세하고 설득력 있게)"
+  },
+  "detailedDescription": "상세 페이지용 설명 (500-800자, 구매를 유도하는 상세한 설명)",
+  "promotionalPosts": {
+    "instagram": "인스타그램 홍보글 (이모지 포함, 해시태그 없이, 150-200자)",
+    "blog": "블로그 홍보글 (SEO 친화적, 400-600자)"
+  },
+  "hashtags": ["#해시태그1", "#해시태그2", "..."] // 10-15개의 관련 해시태그
+}
+
+모든 콘텐츠는 한국어로 작성하고, 한국 시장에 최적화해주세요.`;
   }
 
   /**
    * Validate and format LLM output to ensure all required fields are present.
-   *
-   * @param outputData - Raw output from LLM
-   * @returns Validated and formatted content
    */
   private validateAndFormatOutput(
     outputData: unknown
   ): SmartStoreGeneratedContent {
-    // Type guard to check if output has required structure
     if (!outputData || typeof outputData !== 'object') {
       throw new Error('Invalid LLM output: output data is not an object');
     }
 
     const data = outputData as Record<string, unknown>;
 
-    // Validate and extract required fields
-    const seoProductName = this.extractString(
+    const seoProductName = this.extractStringFlexible(
       data,
-      'seoProductName',
+      ['seoProductName', 'seo_product_name', 'productName', 'title'],
       'SEO product name'
     );
 
     const summaries = this.extractSummaries(data);
-    const detailedDescription = this.extractString(
+    const detailedDescription = this.extractStringFlexible(
       data,
-      'detailedDescription',
+      ['detailedDescription', 'detailed_description', 'description', 'productDescription'],
       'Detailed description'
     );
     const promotionalPosts = this.extractPromotionalPosts(data);
@@ -115,108 +137,76 @@ export class SmartStoreContentService {
     };
   }
 
-  /**
-   * Extract summaries from output data.
-   *
-   * @param data - Output data
-   * @returns Summaries object
-   */
   private extractSummaries(data: Record<string, unknown>): {
     oneLine: string;
     threeLine: string;
     blog: string;
   } {
-    // Try to extract from nested summaries object
-    if (data.summaries && typeof data.summaries === 'object') {
-      const summaries = data.summaries as Record<string, unknown>;
-      return {
-        oneLine: this.extractString(summaries, 'oneLine', 'One-line summary'),
-        threeLine: this.extractString(
-          summaries,
-          'threeLine',
-          'Three-line summary'
-        ),
-        blog: this.extractString(summaries, 'blog', 'Blog summary'),
-      };
-    }
+    // LLM might put blog at top level or inside summaries - check both
+    const summaries = (data.summaries && typeof data.summaries === 'object')
+      ? data.summaries as Record<string, unknown>
+      : data;
+    
+    // For blog, also check top-level data if not found in summaries
+    const getBlogSummary = (): string => {
+      // First try in summaries object
+      if (data.summaries && typeof data.summaries === 'object') {
+        const sum = data.summaries as Record<string, unknown>;
+        for (const key of ['blog', 'blogSummary', 'blog_summary']) {
+          if (typeof sum[key] === 'string' && (sum[key] as string).trim()) {
+            return (sum[key] as string).trim();
+          }
+        }
+      }
+      // Then check top-level (LLM sometimes puts blog outside summaries)
+      for (const key of ['blog', 'blogSummary', 'blog_summary']) {
+        if (typeof data[key] === 'string' && (data[key] as string).trim()) {
+          return (data[key] as string).trim();
+        }
+      }
+      throw new Error('Invalid LLM output: Blog summary is missing or invalid');
+    };
 
-    // Fallback: extract individual fields
     return {
-      oneLine: this.extractString(data, 'oneLineSummary', 'One-line summary'),
-      threeLine: this.extractString(
-        data,
-        'threeLineSummary',
-        'Three-line summary'
-      ),
-      blog: this.extractString(data, 'blogSummary', 'Blog summary'),
+      oneLine: this.extractStringFlexible(summaries, ['oneLine', 'oneLineSummary', 'one_line'], 'One-line summary'),
+      threeLine: this.extractStringFlexible(summaries, ['threeLine', 'threeLineSummary', 'three_line'], 'Three-line summary'),
+      blog: getBlogSummary(),
     };
   }
 
-  /**
-   * Extract promotional posts from output data.
-   *
-   * @param data - Output data
-   * @returns Promotional posts object
-   */
   private extractPromotionalPosts(data: Record<string, unknown>): {
     instagram: string;
     blog: string;
   } {
-    // Try to extract from nested promotionalPosts object
     if (data.promotionalPosts && typeof data.promotionalPosts === 'object') {
       const posts = data.promotionalPosts as Record<string, unknown>;
       return {
-        instagram: this.extractString(
-          posts,
-          'instagram',
-          'Instagram post'
-        ),
-        blog: this.extractString(posts, 'blog', 'Blog post'),
+        instagram: this.extractStringFlexible(posts, ['instagram', 'instagramPost', 'instagram_post'], 'Instagram post'),
+        blog: this.extractStringFlexible(posts, ['blog', 'blogPost', 'blog_post'], 'Blog post'),
       };
     }
 
-    // Fallback: extract individual fields
     return {
-      instagram: this.extractString(
-        data,
-        'instagramPost',
-        'Instagram post'
-      ),
-      blog: this.extractString(data, 'blogPost', 'Blog post'),
+      instagram: this.extractStringFlexible(data, ['instagramPost', 'instagram', 'instagram_post'], 'Instagram post'),
+      blog: this.extractStringFlexible(data, ['blogPost', 'blog', 'blog_post'], 'Blog post'),
     };
   }
 
-  /**
-   * Extract hashtags from output data.
-   *
-   * @param data - Output data
-   * @returns Array of hashtags
-   */
   private extractHashtags(data: Record<string, unknown>): string[] {
     if (Array.isArray(data.hashtags)) {
       return data.hashtags.map((tag) => String(tag));
     }
 
     if (typeof data.hashtags === 'string') {
-      // Split comma-separated hashtags
       return data.hashtags
         .split(',')
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
     }
 
-    // Fallback: return empty array
     return [];
   }
 
-  /**
-   * Extract string value from data object with fallback.
-   *
-   * @param data - Data object
-   * @param key - Key to extract
-   * @param fieldName - Human-readable field name for error messages
-   * @returns Extracted string value
-   */
   private extractString(
     data: Record<string, unknown>,
     key: string,
@@ -228,5 +218,24 @@ export class SmartStoreContentService {
     }
     throw new Error(`Invalid LLM output: ${fieldName} is missing or invalid`);
   }
-}
 
+  /**
+   * Extract string with multiple possible keys (flexible parsing)
+   */
+  private extractStringFlexible(
+    data: Record<string, unknown>,
+    keys: string[],
+    fieldName: string
+  ): string {
+    for (const key of keys) {
+      const value = data[key];
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value.trim();
+      }
+    }
+    
+    // Log available keys for debugging
+    console.warn(`Missing field "${fieldName}". Available keys:`, Object.keys(data));
+    throw new Error(`Invalid LLM output: ${fieldName} is missing or invalid`);
+  }
+}

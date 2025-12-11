@@ -10,10 +10,8 @@ const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
-  // Enable React Compiler for performance optimization (Next.js 16+)
-  experimental: {
-    reactCompiler: true,
-  },
+  // Note: React Compiler is enabled via babel-plugin-react-compiler
+  // which is configured automatically when the package is installed
 };
 
 const plugins = [
