@@ -1,4 +1,5 @@
 import type { PromptTemplate } from '../types/llm-types';
+import { supabaseClient } from '../utils/supabase-client';
 
 /**
  * Service for building prompts from templates with variable substitution.
@@ -10,16 +11,16 @@ export class PromptBuilder {
    * @param templateId - Template identifier
    * @param inputData - Input data to substitute into template
    * @param context - Optional context data
+   * @param version - Optional template version
    * @returns Formatted prompt string
    */
   async build(
     templateId: string,
     inputData: Record<string, unknown>,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
+    version?: string
   ): Promise<string> {
-    // TODO: Load template from Supabase
-    // For now, return a simple template
-    const template = await this.loadTemplate(templateId);
+    const template = await this.loadTemplate(templateId, version);
 
     if (!template) {
       throw new Error(`Template not found: ${templateId}`);
@@ -58,28 +59,39 @@ export class PromptBuilder {
    * Load template from storage (Supabase).
    *
    * @param templateId - Template identifier
+   * @param version - Optional template version
    * @returns Prompt template or null if not found
    */
   private async loadTemplate(
-    templateId: string
+    templateId: string,
+    version?: string
   ): Promise<PromptTemplate | null> {
-    // TODO: Implement Supabase integration
-    // For now, return a mock template
-    return {
-      id: templateId,
-      moduleId: 'test-module',
-      version: '1.0.0',
-      name: 'Test Template',
-      template: 'Generate content for {{content}}',
-      variables: [
-        {
-          name: 'content',
-          type: 'string',
-          required: true,
-        },
-      ],
-      isActive: true,
-    };
+    try {
+      return await supabaseClient.loadPromptTemplate(templateId, version);
+    } catch (error) {
+      // Fallback to mock template for development/testing
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(
+          `Failed to load template from Supabase, using mock template: ${error}`
+        );
+        return {
+          id: templateId,
+          moduleId: 'test-module',
+          version: '1.0.0',
+          name: 'Test Template',
+          template: 'Generate content for {{content}}',
+          variables: [
+            {
+              name: 'content',
+              type: 'string',
+              required: true,
+            },
+          ],
+          isActive: true,
+        };
+      }
+      throw error;
+    }
   }
 
   /**

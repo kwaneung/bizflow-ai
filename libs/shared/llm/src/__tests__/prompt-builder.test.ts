@@ -1,11 +1,20 @@
 import { PromptBuilder } from '../services/prompt-builder';
+import { supabaseClient } from '../utils/supabase-client';
 import type { PromptTemplate } from '../types/llm-types';
+
+// Mock Supabase client
+jest.mock('../utils/supabase-client', () => ({
+  supabaseClient: {
+    loadPromptTemplate: jest.fn(),
+  },
+}));
 
 describe('PromptBuilder', () => {
   let promptBuilder: PromptBuilder;
 
   beforeEach(() => {
     promptBuilder = new PromptBuilder();
+    jest.clearAllMocks();
   });
 
   describe('build', () => {
@@ -32,7 +41,7 @@ describe('PromptBuilder', () => {
         isActive: true,
       };
 
-      jest.spyOn(promptBuilder as any, 'loadTemplate').mockResolvedValue(mockTemplate);
+      (supabaseClient.loadPromptTemplate as jest.Mock).mockResolvedValue(mockTemplate);
 
       const inputData = {
         productName: 'Test Product',
@@ -96,7 +105,7 @@ describe('PromptBuilder', () => {
         isActive: true,
       };
 
-      jest.spyOn(promptBuilder as any, 'loadTemplate').mockResolvedValue(mockTemplate);
+      (supabaseClient.loadPromptTemplate as jest.Mock).mockResolvedValue(mockTemplate);
 
       const inputDataWithDescription = { content: 'test', description: 'Test Description' };
       const inputDataWithoutDescription = { content: 'test' };

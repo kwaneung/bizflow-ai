@@ -1,9 +1,10 @@
 {
-  "buildCommand": "nx build",
-  "devCommand": "nx serve",
+  "buildCommand": "nx build web",
+  "devCommand": "nx dev web",
   "installCommand": "pnpm install",
   "framework": "nextjs",
-  "outputDirectory": ".next",
+  "outputDirectory": "apps/web/.next",
+  "rootDirectory": "apps/web",
   "ignoreCommand": "git diff --quiet HEAD^ HEAD ./"
 }
 

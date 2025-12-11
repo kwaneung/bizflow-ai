@@ -3,10 +3,23 @@ import { PromptBuilder } from '../services/prompt-builder';
 import { ResponseParser } from '../services/response-parser';
 import { RateLimiter } from '../services/rate-limiter';
 import { ErrorHandler } from '../utils/error-handler';
+import { supabaseClient } from '../utils/supabase-client';
 import type { LLMRequest } from '../types/llm-types';
 
 // Mock fetch globally
 global.fetch = jest.fn();
+
+// Mock Supabase client
+jest.mock('../utils/supabase-client', () => ({
+  supabaseClient: {
+    saveLLMRequest: jest.fn().mockResolvedValue('request-id'),
+    updateLLMRequestStatus: jest.fn().mockResolvedValue(undefined),
+    saveLLMResponse: jest.fn().mockResolvedValue(undefined),
+    saveFormattedOutput: jest.fn().mockResolvedValue(undefined),
+    saveErrorContext: jest.fn().mockResolvedValue(undefined),
+    loadPromptTemplate: jest.fn(),
+  },
+}));
 
 describe('LLMService', () => {
   let llmService: LLMService;
@@ -16,8 +29,20 @@ describe('LLMService', () => {
   let mockErrorHandler: jest.Mocked<ErrorHandler>;
 
   beforeEach(() => {
-    // Set environment variable
+    // Set environment variables
     process.env.OPENAI_API_KEY = 'test-api-key';
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+
+    // Reset all mocks
+    jest.clearAllMocks();
+
+    // Setup Supabase client mocks
+    (supabaseClient.saveLLMRequest as jest.Mock).mockResolvedValue('request-id');
+    (supabaseClient.updateLLMRequestStatus as jest.Mock).mockResolvedValue(undefined);
+    (supabaseClient.saveLLMResponse as jest.Mock).mockResolvedValue(undefined);
+    (supabaseClient.saveFormattedOutput as jest.Mock).mockResolvedValue(undefined);
+    (supabaseClient.saveErrorContext as jest.Mock).mockResolvedValue(undefined);
 
     mockPromptBuilder = {
       build: jest.fn(),

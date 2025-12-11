@@ -2,6 +2,7 @@ import { PromptBuilder } from './prompt-builder';
 import { ResponseParser } from './response-parser';
 import { RateLimiter } from './rate-limiter';
 import { ErrorHandler } from '../utils/error-handler';
+import { supabaseClient } from '../utils/supabase-client';
 import type {
   LLMRequest,
   LLMResponse,
@@ -71,9 +72,24 @@ export class LLMService {
       // Validate input
       this.validateRequest(request);
 
+      // Save request to Supabase
+      try {
+        await supabaseClient.saveLLMRequest(
+          requestId,
+          request.moduleId,
+          request.inputData,
+          request.promptTemplateId
+        );
+        await supabaseClient.updateLLMRequestStatus(requestId, 'processing');
+      } catch (dbError) {
+        // Log but don't fail the request if DB save fails
+        console.warn('Failed to save request to database:', dbError);
+      }
+
       // Check rate limit
       const canProcess = await this.rateLimiter.checkLimit(request.moduleId);
       if (!canProcess) {
+        await supabaseClient.updateLLMRequestStatus(requestId, 'failed');
         if (this.rateLimiter) {
           const queuedRequestId = await this.rateLimiter.queueRequest(request);
           throw new Error(
@@ -87,7 +103,8 @@ export class LLMService {
       const prompt = await this.promptBuilder.build(
         request.promptTemplateId,
         request.inputData as Record<string, unknown>,
-        request.context
+        request.context,
+        request.promptTemplateVersion
       );
 
       // Call LLM API
@@ -100,6 +117,32 @@ export class LLMService {
       );
 
       const processingTime = Date.now() - startTime;
+      const model = 'gpt-4'; // TODO: Get from API response
+
+      // Save response and output to Supabase
+      try {
+        await supabaseClient.saveLLMResponse(requestId, rawResponse, {
+          model,
+          tokensUsed: 0, // TODO: Get from API response
+          latencyMs: processingTime,
+        });
+
+        await supabaseClient.saveFormattedOutput(
+          requestId,
+          request.moduleId,
+          parsedData,
+          'json',
+          {
+            processingTime,
+            model,
+          }
+        );
+
+        await supabaseClient.updateLLMRequestStatus(requestId, 'completed');
+      } catch (dbError) {
+        // Log but don't fail the request if DB save fails
+        console.warn('Failed to save response to database:', dbError);
+      }
 
       // Return formatted output
       return {
@@ -110,7 +153,7 @@ export class LLMService {
         metadata: {
           requestId,
           processingTime,
-          model: 'gpt-4', // TODO: Get from API response
+          model,
         },
       };
     } catch (error) {
@@ -119,6 +162,20 @@ export class LLMService {
         this.determineErrorCode(error),
         error
       );
+
+      // Save error context to Supabase
+      try {
+        await supabaseClient.updateLLMRequestStatus(requestId, 'failed');
+        await supabaseClient.saveErrorContext(requestId, {
+          type: errorContext.type,
+          code: errorContext.code,
+          message: errorContext.message,
+          technicalDetails: errorContext.technicalDetails,
+          recoverySuggestions: errorContext.recoverySuggestions,
+        });
+      } catch (dbError) {
+        console.warn('Failed to save error context to database:', dbError);
+      }
 
       throw new Error(
         `LLM processing failed: ${errorContext.message}. ${errorContext.recoverySuggestions.join(', ')}`

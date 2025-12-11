@@ -15,6 +15,7 @@ export { RateLimiter } from './services/rate-limiter';
 
 // Utilities
 export { ErrorHandler } from './utils/error-handler';
+export { supabaseClient } from './utils/supabase-client';
 
 // Types
 export type {

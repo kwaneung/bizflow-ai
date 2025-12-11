@@ -104,13 +104,13 @@
 - [ ] T041 [US1] Create Supabase table for llm_responses in supabase/migrations/004_llm_responses.sql
 - [ ] T042 [US1] Create Supabase table for formatted_outputs in supabase/migrations/005_formatted_outputs.sql
 - [ ] T043 [US1] Create Supabase table for error_contexts in supabase/migrations/006_error_contexts.sql
-- [ ] T044 [US1] Implement Supabase client integration in libs/shared/llm/src/utils/supabase-client.ts
-- [ ] T045 [US1] Create Next.js API route for LLM processing in apps/web/src/app/api/llm/process/route.ts
-- [ ] T046 [US1] Create Next.js API route for request status in apps/web/src/app/api/llm/requests/[requestId]/route.ts
-- [ ] T047 [US1] Create Next.js API route for rate limit status in apps/web/src/app/api/llm/rate-limit/status/route.ts
-- [ ] T048 [US1] Create index.ts exports in libs/shared/llm/src/index.ts
-- [ ] T049 [US1] Create package.json for llm library in libs/shared/llm/package.json
-- [ ] T050 [US1] Configure TypeScript path mapping for @bizflow/shared/llm in tsconfig.base.json
+- [x] T044 [US1] Implement Supabase client integration in libs/shared/llm/src/utils/supabase-client.ts
+- [x] T045 [US1] Create Next.js API route for LLM processing in apps/web/src/app/api/llm/process/route.ts
+- [x] T046 [US1] Create Next.js API route for request status in apps/web/src/app/api/llm/requests/[requestId]/route.ts
+- [x] T047 [US1] Create Next.js API route for rate limit status in apps/web/src/app/api/llm/rate-limit/status/route.ts
+- [x] T048 [US1] Create index.ts exports in libs/shared/llm/src/index.ts
+- [x] T049 [US1] Create package.json for llm library in libs/shared/llm/package.json
+- [x] T050 [US1] Configure TypeScript path mapping for @bizflow/shared/llm in tsconfig.base.json
 
 **Checkpoint**: At this point, User Story 1 should be fully functional. Domain modules can use shared LLM service to process inputs and receive formatted outputs.
 
