@@ -1,43 +1,24 @@
-# BizFlow AI 문서
+# 문서
 
-이 디렉토리는 프로젝트 설정 및 운영에 필요한 문서들을 포함합니다.
+프로젝트 설정 및 운영에 필요한 가이드 문서입니다.
 
-## 주요 문서
+## 📚 가이드
 
-### 설정 가이드
+### 환경 설정
 
-- **[environment-setup.md](./environment-setup.md)** - 로컬 개발 및 Vercel 배포 환경 설정 가이드
-- **[supabase-api-keys-guide.md](./supabase-api-keys-guide.md)** - Supabase API 키 가져오기 가이드
-- **[openai-api-key-setup.md](./openai-api-key-setup.md)** - OpenAI API 키 발급 및 설정 가이드
+- [environment-setup.md](./environment-setup.md) - 로컬 개발 및 Vercel 배포 환경 설정
 
-### 참고 문서
+### API 키 설정
 
-- **[supabase/README.md](../supabase/README.md)** - Supabase 프로젝트 설정 및 마이그레이션 가이드
+- [supabase-api-keys-guide.md](./supabase-api-keys-guide.md) - Supabase API 키 가이드
+- [openai-api-key-setup.md](./openai-api-key-setup.md) - OpenAI API 키 발급 및 설정
 
----
+### 배포
 
-## 정리된 문서 (임시 가이드)
+- [vercel-deployment-guide.md](./vercel-deployment-guide.md) - Vercel 배포 가이드
+- [vercel-monorepo-setup.md](./vercel-monorepo-setup.md) - 모노레포 설정
 
-다음 문서들은 설정 완료 후 정리되었습니다:
+### 기타
 
-- ~~connection-steps.md~~ - Supabase/Vercel 연결 단계 (완료)
-- ~~env-vars-checklist.md~~ - 환경 변수 체크리스트 (완료)
-- ~~env-vars-final-checklist.md~~ - 최종 체크리스트 (완료)
-- ~~setup-checklist.md~~ - 설정 체크리스트 (완료)
-- ~~supabase-naming-guide.md~~ - Supabase 명명 가이드 (완료)
-- ~~vercel-deployment-issue.md~~ - 배포 오류 해결 (해결됨)
-- ~~vercel-env-setup-guide.md~~ - Vercel 환경 변수 설정 (중복)
-- ~~vercel-env-vars.md~~ - Vercel 환경 변수 (중복)
-
----
-
-## 문서 구조
-
-```
-docs/
-├── README.md                    # 이 파일
-├── environment-setup.md         # 환경 설정 (로컬/Vercel)
-├── supabase-api-keys-guide.md  # Supabase 키 가이드
-└── openai-api-key-setup.md     # OpenAI 키 가이드
-```
-
+- [git-commit-strategy.md](./git-commit-strategy.md) - Git 커밋 전략
+- [supabase/README.md](../supabase/README.md) - Supabase 마이그레이션 가이드
