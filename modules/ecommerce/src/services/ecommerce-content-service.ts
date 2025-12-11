@@ -1,13 +1,13 @@
 import OpenAI from 'openai';
 import type {
-  SmartStoreProductInput,
-  SmartStoreGeneratedContent,
-} from '../types/smartstore-types';
+  EcommerceProductInput,
+  EcommerceGeneratedContent,
+} from '../types/ecommerce-types';
 
 /**
- * Service for generating SmartStore product content using LLM.
+ * Service for generating ecommerce product content using LLM.
  */
-export class SmartStoreContentService {
+export class EcommerceContentService {
   private client: OpenAI;
 
   constructor() {
@@ -21,14 +21,14 @@ export class SmartStoreContentService {
   }
 
   /**
-   * Generate all content formats for a SmartStore product.
+   * Generate all content formats for an ecommerce product.
    *
    * @param productInput - Product input data
    * @returns Generated content
    */
   async generateContent(
-    productInput: SmartStoreProductInput
-  ): Promise<SmartStoreGeneratedContent> {
+    productInput: EcommerceProductInput,
+  ): Promise<EcommerceGeneratedContent> {
     const prompt = this.buildPrompt(productInput);
 
     const response = await this.client.chat.completions.create({
@@ -49,10 +49,10 @@ export class SmartStoreContentService {
     });
 
     const content = response.choices[0]?.message?.content || '{}';
-    
+
     // Log raw response for debugging
     console.log('LLM Response:', content);
-    
+
     const parsedContent = JSON.parse(content);
 
     return this.validateAndFormatOutput(parsedContent);
@@ -61,7 +61,7 @@ export class SmartStoreContentService {
   /**
    * Build prompt for content generation.
    */
-  private buildPrompt(productInput: SmartStoreProductInput): string {
+  private buildPrompt(productInput: EcommerceProductInput): string {
     const priceInfo = productInput.price
       ? `가격: ${productInput.price.toLocaleString()}원`
       : '';
@@ -69,7 +69,7 @@ export class SmartStoreContentService {
       ? `카테고리: ${productInput.category}`
       : '';
 
-    return `당신은 네이버 스마트스토어 상품 마케팅 콘텐츠 전문가입니다.
+    return `당신은 온라인 쇼핑몰 상품 마케팅 콘텐츠 전문가입니다.
 
 다음 상품 정보를 바탕으로 SEO 최적화된 마케팅 콘텐츠를 생성해주세요.
 
@@ -105,8 +105,8 @@ ${categoryInfo ? `- ${categoryInfo}` : ''}
    * Validate and format LLM output to ensure all required fields are present.
    */
   private validateAndFormatOutput(
-    outputData: unknown
-  ): SmartStoreGeneratedContent {
+    outputData: unknown,
+  ): EcommerceGeneratedContent {
     if (!outputData || typeof outputData !== 'object') {
       throw new Error('Invalid LLM output: output data is not an object');
     }
@@ -116,14 +116,19 @@ ${categoryInfo ? `- ${categoryInfo}` : ''}
     const seoProductName = this.extractStringFlexible(
       data,
       ['seoProductName', 'seo_product_name', 'productName', 'title'],
-      'SEO product name'
+      'SEO product name',
     );
 
     const summaries = this.extractSummaries(data);
     const detailedDescription = this.extractStringFlexible(
       data,
-      ['detailedDescription', 'detailed_description', 'description', 'productDescription'],
-      'Detailed description'
+      [
+        'detailedDescription',
+        'detailed_description',
+        'description',
+        'productDescription',
+      ],
+      'Detailed description',
     );
     const promotionalPosts = this.extractPromotionalPosts(data);
     const hashtags = this.extractHashtags(data);
@@ -143,10 +148,11 @@ ${categoryInfo ? `- ${categoryInfo}` : ''}
     blog: string;
   } {
     // LLM might put blog at top level or inside summaries - check both
-    const summaries = (data.summaries && typeof data.summaries === 'object')
-      ? data.summaries as Record<string, unknown>
-      : data;
-    
+    const summaries =
+      data.summaries && typeof data.summaries === 'object'
+        ? (data.summaries as Record<string, unknown>)
+        : data;
+
     // For blog, also check top-level data if not found in summaries
     const getBlogSummary = (): string => {
       // First try in summaries object
@@ -168,8 +174,16 @@ ${categoryInfo ? `- ${categoryInfo}` : ''}
     };
 
     return {
-      oneLine: this.extractStringFlexible(summaries, ['oneLine', 'oneLineSummary', 'one_line'], 'One-line summary'),
-      threeLine: this.extractStringFlexible(summaries, ['threeLine', 'threeLineSummary', 'three_line'], 'Three-line summary'),
+      oneLine: this.extractStringFlexible(
+        summaries,
+        ['oneLine', 'oneLineSummary', 'one_line'],
+        'One-line summary',
+      ),
+      threeLine: this.extractStringFlexible(
+        summaries,
+        ['threeLine', 'threeLineSummary', 'three_line'],
+        'Three-line summary',
+      ),
       blog: getBlogSummary(),
     };
   }
@@ -181,14 +195,30 @@ ${categoryInfo ? `- ${categoryInfo}` : ''}
     if (data.promotionalPosts && typeof data.promotionalPosts === 'object') {
       const posts = data.promotionalPosts as Record<string, unknown>;
       return {
-        instagram: this.extractStringFlexible(posts, ['instagram', 'instagramPost', 'instagram_post'], 'Instagram post'),
-        blog: this.extractStringFlexible(posts, ['blog', 'blogPost', 'blog_post'], 'Blog post'),
+        instagram: this.extractStringFlexible(
+          posts,
+          ['instagram', 'instagramPost', 'instagram_post'],
+          'Instagram post',
+        ),
+        blog: this.extractStringFlexible(
+          posts,
+          ['blog', 'blogPost', 'blog_post'],
+          'Blog post',
+        ),
       };
     }
 
     return {
-      instagram: this.extractStringFlexible(data, ['instagramPost', 'instagram', 'instagram_post'], 'Instagram post'),
-      blog: this.extractStringFlexible(data, ['blogPost', 'blog', 'blog_post'], 'Blog post'),
+      instagram: this.extractStringFlexible(
+        data,
+        ['instagramPost', 'instagram', 'instagram_post'],
+        'Instagram post',
+      ),
+      blog: this.extractStringFlexible(
+        data,
+        ['blogPost', 'blog', 'blog_post'],
+        'Blog post',
+      ),
     };
   }
 
@@ -210,7 +240,7 @@ ${categoryInfo ? `- ${categoryInfo}` : ''}
   private extractString(
     data: Record<string, unknown>,
     key: string,
-    fieldName: string
+    fieldName: string,
   ): string {
     const value = data[key];
     if (typeof value === 'string' && value.trim().length > 0) {
@@ -225,7 +255,7 @@ ${categoryInfo ? `- ${categoryInfo}` : ''}
   private extractStringFlexible(
     data: Record<string, unknown>,
     keys: string[],
-    fieldName: string
+    fieldName: string,
   ): string {
     for (const key of keys) {
       const value = data[key];
@@ -233,9 +263,12 @@ ${categoryInfo ? `- ${categoryInfo}` : ''}
         return value.trim();
       }
     }
-    
+
     // Log available keys for debugging
-    console.warn(`Missing field "${fieldName}". Available keys:`, Object.keys(data));
+    console.warn(
+      `Missing field "${fieldName}". Available keys:`,
+      Object.keys(data),
+    );
     throw new Error(`Invalid LLM output: ${fieldName} is missing or invalid`);
   }
 }

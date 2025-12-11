@@ -16,13 +16,24 @@ import {
   Badge,
   Skeleton,
 } from '@bizflow/shared/ui';
-import type { SmartStoreGeneratedContent } from '@bizflow/modules/smartstore';
-import { Copy, Download, ArrowLeft, Check, Hash, FileText, Instagram, Megaphone } from 'lucide-react';
+import type { EcommerceGeneratedContent } from '@bizflow/modules/ecommerce';
+import {
+  Copy,
+  Download,
+  ArrowLeft,
+  Check,
+  Hash,
+  FileText,
+  Instagram,
+  Megaphone,
+} from 'lucide-react';
 
 function ResultContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [content, setContent] = useState<SmartStoreGeneratedContent | null>(null);
+  const [content, setContent] = useState<EcommerceGeneratedContent | null>(
+    null,
+  );
   const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,10 +44,10 @@ function ResultContent() {
         setContent(decoded);
       } catch (error) {
         console.error('Failed to parse content data:', error);
-        router.push('/smartstore');
+        router.push('/ecommerce');
       }
     } else {
-      router.push('/smartstore');
+      router.push('/ecommerce');
     }
   }, [searchParams, router]);
 
@@ -93,10 +104,18 @@ ${content.promotionalPosts.blog}
 ${content.hashtags.join(' ')}
     `.trim();
 
-    downloadAsFile(allContent, `smartstore-content-${Date.now()}.txt`);
+    downloadAsFile(allContent, `ecommerce-content-${Date.now()}.txt`);
   };
 
-  const CopyButton = ({ text, id, label }: { text: string; id: string; label?: string }) => (
+  const CopyButton = ({
+    text,
+    id,
+    label,
+  }: {
+    text: string;
+    id: string;
+    label?: string;
+  }) => (
     <Button
       variant="outline"
       size="sm"
@@ -128,7 +147,7 @@ ${content.hashtags.join(' ')}
         <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => router.push('/smartstore')}
+            onClick={() => router.push('/ecommerce')}
             className="mb-4 -ml-2 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -143,7 +162,10 @@ ${content.hashtags.join(' ')}
                 생성된 콘텐츠를 확인하고 복사하거나 다운로드하세요
               </p>
             </div>
-            <Button onClick={downloadAll} className="shrink-0 bg-gradient-to-r from-emerald-500 to-teal-600">
+            <Button
+              onClick={downloadAll}
+              className="shrink-0 bg-gradient-to-r from-emerald-500 to-teal-600"
+            >
               <Download className="mr-2 h-4 w-4" />
               전체 다운로드
             </Button>
@@ -157,8 +179,15 @@ ${content.hashtags.join(' ')}
               <FileText className="w-4 h-4 mr-1.5 hidden sm:block" />
               SEO 상품명
             </TabsTrigger>
-            <TabsTrigger value="summaries" className="text-xs sm:text-sm py-2">요약</TabsTrigger>
-            <TabsTrigger value="description" className="text-xs sm:text-sm py-2">상세 설명</TabsTrigger>
+            <TabsTrigger value="summaries" className="text-xs sm:text-sm py-2">
+              요약
+            </TabsTrigger>
+            <TabsTrigger
+              value="description"
+              className="text-xs sm:text-sm py-2"
+            >
+              상세 설명
+            </TabsTrigger>
             <TabsTrigger value="promo" className="text-xs sm:text-sm py-2">
               <Megaphone className="w-4 h-4 mr-1.5 hidden sm:block" />
               홍보글
@@ -194,7 +223,9 @@ ${content.hashtags.join(' ')}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <CardTitle className="text-lg">1줄 요약</CardTitle>
-                      <Badge variant="secondary" className="text-xs">간단</Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        간단
+                      </Badge>
                     </div>
                     <CopyButton text={content.summaries.oneLine} id="oneLine" />
                   </div>
@@ -209,13 +240,20 @@ ${content.hashtags.join(' ')}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <CardTitle className="text-lg">3줄 요약</CardTitle>
-                      <Badge variant="secondary" className="text-xs">중간</Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        중간
+                      </Badge>
                     </div>
-                    <CopyButton text={content.summaries.threeLine} id="threeLine" />
+                    <CopyButton
+                      text={content.summaries.threeLine}
+                      id="threeLine"
+                    />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-line">{content.summaries.threeLine}</p>
+                  <p className="whitespace-pre-line">
+                    {content.summaries.threeLine}
+                  </p>
                 </CardContent>
               </Card>
 
@@ -224,13 +262,17 @@ ${content.hashtags.join(' ')}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <CardTitle className="text-lg">블로그 요약</CardTitle>
-                      <Badge variant="secondary" className="text-xs">상세</Badge>
+                      <Badge variant="secondary" className="text-xs">
+                        상세
+                      </Badge>
                     </div>
                     <CopyButton text={content.summaries.blog} id="blog" />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-line">{content.summaries.blog}</p>
+                  <p className="whitespace-pre-line">
+                    {content.summaries.blog}
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -242,7 +284,10 @@ ${content.hashtags.join(' ')}
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">상세 페이지 설명</CardTitle>
-                  <CopyButton text={content.detailedDescription} id="description" />
+                  <CopyButton
+                    text={content.detailedDescription}
+                    id="description"
+                  />
                 </div>
               </CardHeader>
               <CardContent>
@@ -263,14 +308,21 @@ ${content.hashtags.join(' ')}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Instagram className="w-5 h-5 text-pink-500" />
-                      <CardTitle className="text-lg">인스타그램 홍보글</CardTitle>
+                      <CardTitle className="text-lg">
+                        인스타그램 홍보글
+                      </CardTitle>
                     </div>
-                    <CopyButton text={content.promotionalPosts.instagram} id="instagram" />
+                    <CopyButton
+                      text={content.promotionalPosts.instagram}
+                      id="instagram"
+                    />
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-950/30 dark:to-purple-950/30 rounded-lg p-4">
-                    <p className="whitespace-pre-line">{content.promotionalPosts.instagram}</p>
+                    <p className="whitespace-pre-line">
+                      {content.promotionalPosts.instagram}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -282,12 +334,17 @@ ${content.hashtags.join(' ')}
                       <FileText className="w-5 h-5 text-emerald-500" />
                       <CardTitle className="text-lg">블로그 홍보글</CardTitle>
                     </div>
-                    <CopyButton text={content.promotionalPosts.blog} id="blogPost" />
+                    <CopyButton
+                      text={content.promotionalPosts.blog}
+                      id="blogPost"
+                    />
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="bg-emerald-50 dark:bg-emerald-950/30 rounded-lg p-4 max-h-[400px] overflow-y-auto">
-                    <p className="whitespace-pre-line leading-relaxed">{content.promotionalPosts.blog}</p>
+                    <p className="whitespace-pre-line leading-relaxed">
+                      {content.promotionalPosts.blog}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -303,7 +360,11 @@ ${content.hashtags.join(' ')}
                     <CardTitle className="text-lg">해시태그 추천</CardTitle>
                     <Badge variant="outline">{content.hashtags.length}개</Badge>
                   </div>
-                  <CopyButton text={content.hashtags.join(' ')} id="hashtags" label="전체 복사" />
+                  <CopyButton
+                    text={content.hashtags.join(' ')}
+                    id="hashtags"
+                    label="전체 복사"
+                  />
                 </div>
               </CardHeader>
               <CardContent>
@@ -315,7 +376,9 @@ ${content.hashtags.join(' ')}
                       className="px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/50 dark:hover:to-indigo-900/50 transition-all cursor-pointer border border-blue-200 dark:border-blue-800"
                     >
                       {copied === `tag-${index}` ? (
-                        <span className="text-emerald-600 dark:text-emerald-400">✓ 복사됨</span>
+                        <span className="text-emerald-600 dark:text-emerald-400">
+                          ✓ 복사됨
+                        </span>
                       ) : (
                         tag
                       )}
@@ -347,7 +410,7 @@ function ResultSkeleton() {
   );
 }
 
-export default function SmartStoreResultPage() {
+export default function EcommerceResultPage() {
   return (
     <Suspense fallback={<ResultSkeleton />}>
       <ResultContent />

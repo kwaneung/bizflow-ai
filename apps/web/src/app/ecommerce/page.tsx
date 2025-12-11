@@ -18,15 +18,15 @@ import {
   Badge,
 } from '@bizflow/shared/ui';
 import { AlertCircle, Sparkles, Package } from 'lucide-react';
-import type { SmartStoreProductInput } from '@bizflow/modules/smartstore';
+import type { EcommerceProductInput } from '@bizflow/modules/ecommerce';
 
-export default function SmartStorePage() {
+export default function EcommercePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // 상품 입력 상태
-  const [productData, setProductData] = useState<SmartStoreProductInput>({
+  const [productData, setProductData] = useState<EcommerceProductInput>({
     name: '',
     description: '',
     price: undefined,
@@ -44,7 +44,7 @@ export default function SmartStorePage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/smartstore/generate', {
+      const response = await fetch('/api/ecommerce/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productData }),
@@ -62,7 +62,7 @@ export default function SmartStorePage() {
       }
 
       router.push(
-        `/smartstore/result?data=${encodeURIComponent(
+        `/ecommerce/result?data=${encodeURIComponent(
           JSON.stringify(result.content),
         )}`,
       );
@@ -86,7 +86,7 @@ export default function SmartStorePage() {
             <Package className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight mb-3 bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 bg-clip-text text-transparent">
-            스마트스토어 콘텐츠 생성
+            이커머스 콘텐츠 생성
           </h1>
           <p className="text-muted-foreground text-lg max-w-md mx-auto">
             상품 정보를 입력하면 AI가 SEO 최적화된 마케팅 콘텐츠를 생성합니다

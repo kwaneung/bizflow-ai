@@ -119,12 +119,12 @@ function ModuleCard({
 export default function HomePage() {
   const modules: ModuleCardProps[] = [
     {
-      title: '스마트스토어',
+      title: '이커머스',
       description:
-        '네이버 스마트스토어 상품 마케팅 콘텐츠를 AI가 자동으로 생성합니다.',
+        '온라인 쇼핑몰 상품 마케팅 콘텐츠를 AI가 자동으로 생성합니다.',
       icon: <Package className="w-7 h-7" />,
       status: 'available',
-      href: '/smartstore',
+      href: '/ecommerce',
       features: [
         'SEO 최적화 상품명 생성',
         '한 줄/세 줄/블로그용 요약',

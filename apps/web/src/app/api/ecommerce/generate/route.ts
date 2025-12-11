@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  SmartStoreContentService,
-  type SmartStoreProductInput,
-} from '@bizflow/modules/smartstore';
+  EcommerceContentService,
+  type EcommerceProductInput,
+} from '@bizflow/modules/ecommerce';
 
 /**
- * POST /api/smartstore/generate
+ * POST /api/ecommerce/generate
  *
- * Generate product content for a SmartStore product using LLM.
+ * Generate product content for an ecommerce product using LLM.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     if (!productData || typeof productData !== 'object') {
       return NextResponse.json(
         { error: 'productData is required and must be an object' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     if (!productData.name || typeof productData.name !== 'string') {
       return NextResponse.json(
         { error: 'productData.name is required and must be a string' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -37,11 +37,11 @@ export async function POST(request: NextRequest) {
         {
           error: 'productData.description is required and must be a string',
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const productInput: SmartStoreProductInput = {
+    const productInput: EcommerceProductInput = {
       name: productData.name,
       description: productData.description,
       options: productData.options,
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       metadata: productData.metadata,
     };
 
-    const contentService = new SmartStoreContentService();
+    const contentService = new EcommerceContentService();
     const generatedContent = await contentService.generateContent(productInput);
 
     return NextResponse.json({
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       content: generatedContent,
     });
   } catch (error) {
-    console.error('Error generating SmartStore content:', error);
+    console.error('Error generating ecommerce content:', error);
     return NextResponse.json(
       {
         error:
@@ -67,8 +67,7 @@ export async function POST(request: NextRequest) {
             ? error.message
             : 'Unknown error occurred while generating content',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

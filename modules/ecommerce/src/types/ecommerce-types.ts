@@ -1,13 +1,13 @@
 import type { Input, Output } from '@bizflow/shared/types';
 
 /**
- * SmartStore Module Input Types
+ * Ecommerce Module Input Types
  */
 
 /**
- * Product information extracted from SmartStore URL or manual entry
+ * Product information for ecommerce content generation
  */
-export interface SmartStoreProductInput {
+export interface EcommerceProductInput {
   /**
    * Product name
    */
@@ -48,38 +48,38 @@ export interface SmartStoreProductInput {
 }
 
 /**
- * Input for SmartStore module
+ * Input for Ecommerce module
  */
-export interface SmartStoreInput extends Input<SmartStoreProductInput> {
+export interface EcommerceInput extends Input<EcommerceProductInput> {
   /**
    * Module identifier
    */
-  moduleId: 'smartstore';
+  moduleId: 'ecommerce';
 
   /**
-   * Input source: 'url' for SmartStore URL, 'manual' for manual entry
+   * Input source: 'url' for product URL, 'manual' for manual entry
    */
   source: 'url' | 'manual';
 
   /**
-   * SmartStore product URL (if source is 'url')
+   * Product URL (if source is 'url')
    */
   url?: string;
 
   /**
    * Manual product data (if source is 'manual')
    */
-  productData?: SmartStoreProductInput;
+  productData?: EcommerceProductInput;
 }
 
 /**
- * SmartStore Module Output Types
+ * Ecommerce Module Output Types
  */
 
 /**
- * Generated content for SmartStore product
+ * Generated content for ecommerce product
  */
-export interface SmartStoreGeneratedContent {
+export interface EcommerceGeneratedContent {
   /**
    * SEO-optimized product name
    */
@@ -132,18 +132,16 @@ export interface SmartStoreGeneratedContent {
 }
 
 /**
- * Output for SmartStore module
+ * Output for Ecommerce module
  */
-export interface SmartStoreOutput extends Output<SmartStoreGeneratedContent> {
+export interface EcommerceOutput extends Output<EcommerceGeneratedContent> {
   /**
    * Module identifier
    */
-  moduleId: 'smartstore';
+  moduleId: 'ecommerce';
 
   /**
    * Generated content
    */
-  outputData: SmartStoreGeneratedContent;
+  outputData: EcommerceGeneratedContent;
 }
-
-
