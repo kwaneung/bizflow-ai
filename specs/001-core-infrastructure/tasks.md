@@ -79,25 +79,25 @@
 
 ### Tests for User Story 1
 
-- [ ] T022 [P] [US1] Create unit test for LLMService.process() in libs/shared/llm/src/__tests__/llm-service.test.ts
-- [ ] T023 [P] [US1] Create unit test for PromptBuilder in libs/shared/llm/src/__tests__/prompt-builder.test.ts
-- [ ] T024 [P] [US1] Create unit test for ResponseParser in libs/shared/llm/src/__tests__/response-parser.test.ts
-- [ ] T025 [P] [US1] Create unit test for RateLimiter in libs/shared/llm/src/__tests__/rate-limiter.test.ts
-- [ ] T026 [P] [US1] Create unit test for ErrorHandler in libs/shared/llm/src/__tests__/error-handler.test.ts
+- [x] T022 [P] [US1] Create unit test for LLMService.process() in libs/shared/llm/src/__tests__/llm-service.test.ts
+- [x] T023 [P] [US1] Create unit test for PromptBuilder in libs/shared/llm/src/__tests__/prompt-builder.test.ts
+- [x] T024 [P] [US1] Create unit test for ResponseParser in libs/shared/llm/src/__tests__/response-parser.test.ts
+- [x] T025 [P] [US1] Create unit test for RateLimiter in libs/shared/llm/src/__tests__/rate-limiter.test.ts
+- [x] T026 [P] [US1] Create unit test for ErrorHandler in libs/shared/llm/src/__tests__/error-handler.test.ts
 - [ ] T027 [US1] Create integration test for LLM service flow in libs/shared/llm/src/__tests__/integration/llm-flow.test.ts
 - [ ] T028 [US1] Create contract test for LLM API endpoint in libs/shared/llm/src/__tests__/contract/api-contract.test.ts
 
 ### Implementation for User Story 1
 
-- [ ] T029 [P] [US1] Create libs/shared/llm library structure with project.json
-- [ ] T030 [P] [US1] Implement LLMRequest type in libs/shared/llm/src/types/llm-types.ts
-- [ ] T031 [P] [US1] Implement LLMResponse type in libs/shared/llm/src/types/llm-types.ts
-- [ ] T032 [P] [US1] Implement ErrorContext type in libs/shared/llm/src/types/llm-types.ts
-- [ ] T033 [P] [US1] Implement PromptBuilder service in libs/shared/llm/src/services/prompt-builder.ts
-- [ ] T034 [P] [US1] Implement ResponseParser service in libs/shared/llm/src/services/response-parser.ts
-- [ ] T035 [P] [US1] Implement RateLimiter service in libs/shared/llm/src/services/rate-limiter.ts
-- [ ] T036 [P] [US1] Implement ErrorHandler utility in libs/shared/llm/src/utils/error-handler.ts
-- [ ] T037 [US1] Implement LLMService main service in libs/shared/llm/src/services/llm-service.ts (depends on T033-T036)
+- [x] T029 [P] [US1] Create libs/shared/llm library structure with project.json
+- [x] T030 [P] [US1] Implement LLMRequest type in libs/shared/llm/src/types/llm-types.ts
+- [x] T031 [P] [US1] Implement LLMResponse type in libs/shared/llm/src/types/llm-types.ts
+- [x] T032 [P] [US1] Implement ErrorContext type in libs/shared/llm/src/types/llm-types.ts
+- [x] T033 [P] [US1] Implement PromptBuilder service in libs/shared/llm/src/services/prompt-builder.ts
+- [x] T034 [P] [US1] Implement ResponseParser service in libs/shared/llm/src/services/response-parser.ts
+- [x] T035 [P] [US1] Implement RateLimiter service in libs/shared/llm/src/services/rate-limiter.ts
+- [x] T036 [P] [US1] Implement ErrorHandler utility in libs/shared/llm/src/utils/error-handler.ts
+- [x] T037 [US1] Implement LLMService main service in libs/shared/llm/src/services/llm-service.ts (depends on T033-T036)
 - [ ] T038 [US1] Create Supabase table for prompt_templates in supabase/migrations/001_prompt_templates.sql
 - [ ] T039 [US1] Create Supabase table for rate_limit_configs in supabase/migrations/002_rate_limit_configs.sql
 - [ ] T040 [US1] Create Supabase table for llm_requests in supabase/migrations/003_llm_requests.sql
