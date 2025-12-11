@@ -16,3 +16,9 @@ export type {
   CrawledProductData,
 } from './types/smartstore-types';
 
+// Services
+export {
+  SmartStoreCrawler,
+  SmartStoreContentService,
+} from './services';
+

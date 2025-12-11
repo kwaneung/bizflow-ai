@@ -12,5 +12,6 @@ export default {
     '^@bizflow/shared/llm$': '<rootDir>/../../libs/shared/llm/src/index.ts',
     '^@bizflow/modules/smartstore$': '<rootDir>/src/index.ts',
   },
+  setupFilesAfterEnv: ['<rootDir>/../../jest.setup.ts'],
 };
 
