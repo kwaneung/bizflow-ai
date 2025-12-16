@@ -1,12 +1,11 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import type { PromptTemplate } from '../types/llm-types';
-import type { Database } from '../../../../supabase/types';
 
 /**
  * Supabase client singleton for LLM service.
  */
 class SupabaseClient {
-  private client: SupabaseClient<Database> | null = null;
+  private client: ReturnType<typeof createClient> | null = null;
 
   /**
    * Get or create Supabase client instance.
@@ -35,7 +34,7 @@ class SupabaseClient {
       );
     }
 
-    this.client = createClient<Database>(supabaseUrl, supabaseAnonKey);
+    this.client = createClient(supabaseUrl, supabaseAnonKey);
     return this.client;
   }
 

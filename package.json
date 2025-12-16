@@ -4,6 +4,7 @@
   "private": true,
   "description": "BizFlow AI - Multi-domain SaaS platform for AI-powered content generation",
   "scripts": {
+    "dev": "nx dev",
     "build": "nx build",
     "test": "nx test",
     "lint": "nx lint",
