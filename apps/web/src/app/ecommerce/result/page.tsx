@@ -80,6 +80,13 @@ function ResultContent() {
 SEO 최적화 상품명:
 ${content.seoProductName}
 
+=== 가격 / 카테고리 의견 ===
+가격 의견:
+${content.priceInsight}
+
+카테고리 의견:
+${content.categoryInsight}
+
 === 요약 ===
 1줄 요약:
 ${content.summaries.oneLine}
@@ -178,9 +185,12 @@ ${content.hashtags.join(' ')}
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-1">
-                  <CardTitle className="text-lg">가격 / 카테고리 의견</CardTitle>
+                  <CardTitle className="text-lg">
+                    가격 / 카테고리 의견
+                  </CardTitle>
                   <p className="text-xs text-muted-foreground">
-                    입력한 값이 있다면 적절성 평가를, 없다면 시장성을 기준으로 추천을 제공합니다.
+                    입력한 값이 있다면 적절성 평가를, 없다면 시장성을 기준으로
+                    추천을 제공합니다.
                   </p>
                 </div>
               </div>
