@@ -1,6 +1,5 @@
-ignoredBuiltDependencies:
-  - nx
 onlyBuiltDependencies:
+  - nx
   - '@parcel/watcher'
   - '@swc/core'
   - esbuild
