@@ -73,6 +73,7 @@ OPENAI_API_KEY=your_openai_api_key
 
 - [환경 설정 가이드](./docs/environment-setup.md)
 - [Supabase API 키 가이드](./docs/supabase-api-keys-guide.md)
+- [Supabase 데이터베이스 관리 가이드](./docs/supabase-database-guide.md)
 - [OpenAI API 키 설정](./docs/openai-api-key-setup.md)
 
 ## 📝 라이선스

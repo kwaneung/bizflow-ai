@@ -129,6 +129,16 @@ export interface EcommerceGeneratedContent {
    * Hashtag recommendations
    */
   hashtags: string[];
+
+  /**
+   * Price evaluation / recommendation based on input or inferred market positioning
+   */
+  priceInsight: string;
+
+  /**
+   * Category evaluation / recommendation based on input or inferred best-fit categories
+   */
+  categoryInsight: string;
 }
 
 /**

@@ -18,7 +18,7 @@ export class PromptBuilder {
     templateId: string,
     inputData: Record<string, unknown>,
     context?: Record<string, unknown>,
-    version?: string
+    version?: string,
   ): Promise<string> {
     const template = await this.loadTemplate(templateId, version);
 
@@ -40,7 +40,7 @@ export class PromptBuilder {
       if (value !== undefined && value !== null) {
         prompt = prompt.replace(
           new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
-          String(value)
+          String(value),
         );
       }
       // Optional variables can be left as placeholder (not replaced)
@@ -64,33 +64,15 @@ export class PromptBuilder {
    */
   private async loadTemplate(
     templateId: string,
-    version?: string
+    version?: string,
   ): Promise<PromptTemplate | null> {
     try {
       return await supabaseClient.loadPromptTemplate(templateId, version);
     } catch (error) {
-      // Fallback to mock template for development/testing
-      if (process.env.NODE_ENV === 'development') {
-        console.warn(
-          `Failed to load template from Supabase, using mock template: ${error}`
-        );
-        return {
-          id: templateId,
-          moduleId: 'test-module',
-          version: '1.0.0',
-          name: 'Test Template',
-          template: 'Generate content for {{content}}',
-          variables: [
-            {
-              name: 'content',
-              type: 'string',
-              required: true,
-            },
-          ],
-          isActive: true,
-        };
-      }
-      throw error;
+      console.warn(
+        `Failed to load prompt template '${templateId}' from Supabase: ${error}`,
+      );
+      return null;
     }
   }
 
@@ -103,18 +85,17 @@ export class PromptBuilder {
    */
   private validateVariables(
     template: PromptTemplate,
-    inputData: Record<string, unknown>
+    inputData: Record<string, unknown>,
   ): void {
     for (const variable of template.variables) {
       if (variable.required) {
         const value = inputData[variable.name];
         if (value === undefined || value === null) {
           throw new Error(
-            `Required variable '${variable.name}' is missing in input data`
+            `Required variable '${variable.name}' is missing in input data`,
           );
         }
       }
     }
   }
 }
-

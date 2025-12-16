@@ -1,23 +1,18 @@
-import OpenAI from 'openai';
+import { LLMService } from '@bizflow/shared/llm';
+import type { LLMRequest } from '@bizflow/shared/llm';
 import type {
   EcommerceProductInput,
   EcommerceGeneratedContent,
 } from '../types/ecommerce-types';
 
 /**
- * Service for generating ecommerce product content using LLM.
+ * Service for generating ecommerce product content using shared LLM service.
  */
 export class EcommerceContentService {
-  private client: OpenAI;
+  private llmService: LLMService;
 
-  constructor() {
-    const apiKey = process.env.OPENAI_API_KEY || '';
-
-    if (!apiKey) {
-      throw new Error('OPENAI_API_KEY environment variable is not set');
-    }
-
-    this.client = new OpenAI({ apiKey });
+  constructor(llmService?: LLMService) {
+    this.llmService = llmService || new LLMService();
   }
 
   /**
@@ -29,76 +24,32 @@ export class EcommerceContentService {
   async generateContent(
     productInput: EcommerceProductInput,
   ): Promise<EcommerceGeneratedContent> {
-    const prompt = this.buildPrompt(productInput);
+    // Build LLM request for ecommerce module
+    const request: LLMRequest = {
+      moduleId: 'ecommerce',
+      inputData: {
+        name: productInput.name,
+        description: productInput.description,
+        price: productInput.price ?? null,
+        category: productInput.category ?? null,
+        options: productInput.options ?? [],
+        images: productInput.images ?? [],
+        metadata: productInput.metadata ?? {},
+      },
+      // Prompt template ID managed by shared LLM service (Supabase templates or dev fallback)
+      promptTemplateId: 'ecommerce-product-content-v1',
+      promptTemplateVersion: '1.0.0',
+      context: {
+        // 가격/카테고리 입력 여부와 상관없이 추천 정보를 포함하도록 명시
+        includePriceRecommendation: true,
+        includeCategoryRecommendation: true,
+      },
+    };
 
-    const response = await this.client.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are a professional marketing content writer specializing in Korean e-commerce products. Always respond with valid JSON only.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
-      response_format: { type: 'json_object' },
-    });
+    const formattedOutput =
+      await this.llmService.process<EcommerceGeneratedContent>(request);
 
-    const content = response.choices[0]?.message?.content || '{}';
-
-    // Log raw response for debugging
-    console.log('LLM Response:', content);
-
-    const parsedContent = JSON.parse(content);
-
-    return this.validateAndFormatOutput(parsedContent);
-  }
-
-  /**
-   * Build prompt for content generation.
-   */
-  private buildPrompt(productInput: EcommerceProductInput): string {
-    const priceInfo = productInput.price
-      ? `가격: ${productInput.price.toLocaleString()}원`
-      : '';
-    const categoryInfo = productInput.category
-      ? `카테고리: ${productInput.category}`
-      : '';
-
-    return `당신은 온라인 쇼핑몰 상품 마케팅 콘텐츠 전문가입니다.
-
-다음 상품 정보를 바탕으로 SEO 최적화된 마케팅 콘텐츠를 생성해주세요.
-
-## 상품 정보
-- 상품명: ${productInput.name}
-- 상품 설명: ${productInput.description}
-${priceInfo ? `- ${priceInfo}` : ''}
-${categoryInfo ? `- ${categoryInfo}` : ''}
-
-## 생성해야 할 콘텐츠
-
-다음 JSON 형식으로 응답해주세요:
-
-{
-  "seoProductName": "SEO 최적화된 상품명 (검색에 잘 노출되도록, 핵심 키워드 포함)",
-  "summaries": {
-    "oneLine": "한 줄 요약 (50자 이내, 핵심 특징)",
-    "threeLine": "세 줄 요약 (각 줄은 핵심 장점 하나씩)",
-    "blog": "블로그용 요약 (200-300자, 상세하고 설득력 있게)"
-  },
-  "detailedDescription": "상세 페이지용 설명 (500-800자, 구매를 유도하는 상세한 설명)",
-  "promotionalPosts": {
-    "instagram": "인스타그램 홍보글 (이모지 포함, 해시태그 없이, 150-200자)",
-    "blog": "블로그 홍보글 (SEO 친화적, 400-600자)"
-  },
-  "hashtags": ["#해시태그1", "#해시태그2", "..."] // 10-15개의 관련 해시태그
-}
-
-모든 콘텐츠는 한국어로 작성하고, 한국 시장에 최적화해주세요.`;
+    return this.validateAndFormatOutput(formattedOutput.outputData);
   }
 
   /**
@@ -132,6 +83,21 @@ ${categoryInfo ? `- ${categoryInfo}` : ''}
     );
     const promotionalPosts = this.extractPromotionalPosts(data);
     const hashtags = this.extractHashtags(data);
+    const priceInsight = this.extractStringFlexible(
+      data,
+      ['priceInsight', 'price_insight', 'priceEvaluation', 'price_evaluation'],
+      'Price insight',
+    );
+    const categoryInsight = this.extractStringFlexible(
+      data,
+      [
+        'categoryInsight',
+        'category_insight',
+        'categoryEvaluation',
+        'category_evaluation',
+      ],
+      'Category insight',
+    );
 
     return {
       seoProductName,
@@ -139,6 +105,8 @@ ${categoryInfo ? `- ${categoryInfo}` : ''}
       detailedDescription,
       promotionalPosts,
       hashtags,
+      priceInsight,
+      categoryInsight,
     };
   }
 

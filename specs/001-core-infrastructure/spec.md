@@ -152,6 +152,40 @@ The core infrastructure MUST be organized to support multiple domain services (e
 - **Versioning Strategy**: Shared libraries MUST support versioning to manage breaking changes without disrupting dependent modules
 - **Build Efficiency**: The monorepo structure MUST enable incremental builds that only rebuild affected modules and libraries
 
+## Tooling & Automation Requirements (Supabase DB & Types)
+
+To keep the database schema and TypeScript types in sync in an automated way (for SDD SpecKit and AI agents), the following conventions MUST be followed:
+
+- **DB Schema Changes MUST use Supabase migrations**
+  - When adding or changing any table/column/index in the `public` schema:
+    - AI/agents MUST generate a new migration file instead of editing the DB directly.
+    - Command (from workspace root):
+      - `supabase migration new <descriptive_migration_name>`
+      - Edit the created file under `supabase/migrations/` and write the SQL DDL.
+  - After editing the migration file, AI/agents MUST apply it to the linked Supabase project using:
+    - `supabase db push`
+
+- **TypeScript Types MUST be regenerated after any DB schema change**
+  - After every successful `supabase db push`, AI/agents MUST regenerate `supabase/types.ts` using:
+    - `supabase gen types typescript --project-id gekgskyqdufwxdcmdtcx --schema public > supabase/types.ts`
+  - The `Database` type from `supabase/types.ts` MUST be used as the single source of truth for Supabase client typing (e.g., `createClient<Database>(...)`).
+  - AI/agents MUST NOT manually edit `supabase/types.ts` when this automated flow is available.
+
+- **LLM Logging Schema Ownership**
+  - The following tables are part of the core LLM logging infrastructure and MUST be maintained via migrations + type generation as described above:
+    - `public.prompt_templates`
+    - `public.llm_requests`
+    - `public.llm_responses`
+    - `public.formatted_outputs`
+    - `public.error_contexts`
+  - Any future tables that extend this logging/monitoring story MUST follow the same workflow:
+    - Migration (`supabase migration new` + SQL in `supabase/migrations/`)
+    - Apply (`supabase db push`)
+    - Types (`supabase gen types typescript ... > supabase/types.ts`)
+
+- **Documentation**
+  - AI/agents SHOULD refer to `docs/supabase-database-guide.md` for detailed, up-to-date commands and examples when modifying the database schema.
+
 ## Assumptions
 
 - LLM API provider supports standard REST API patterns with authentication via API keys

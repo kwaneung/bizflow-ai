@@ -172,6 +172,45 @@ ${content.hashtags.join(' ')}
           </div>
         </div>
 
+        {/* 가격/카테고리 의견 섹션 */}
+        <div className="mb-6 space-y-4">
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/40 dark:to-teal-950/30 backdrop-blur-sm">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-1">
+                  <CardTitle className="text-lg">가격 / 카테고리 의견</CardTitle>
+                  <p className="text-xs text-muted-foreground">
+                    입력한 값이 있다면 적절성 평가를, 없다면 시장성을 기준으로 추천을 제공합니다.
+                  </p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    가격 의견
+                  </Badge>
+                </div>
+                <p className="text-sm whitespace-pre-line leading-relaxed">
+                  {content.priceInsight}
+                </p>
+              </div>
+              <div className="h-px bg-gradient-to-r from-emerald-200/60 via-slate-200/60 to-teal-200/60 dark:from-emerald-800/60 dark:via-slate-800/60 dark:to-teal-800/60" />
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    카테고리 의견
+                  </Badge>
+                </div>
+                <p className="text-sm whitespace-pre-line leading-relaxed">
+                  {content.categoryInsight}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* 탭 컨텐츠 */}
         <Tabs defaultValue="seo" className="space-y-4">
           <TabsList className="grid grid-cols-5 h-auto p-1 bg-slate-100/80 dark:bg-slate-800/80">
