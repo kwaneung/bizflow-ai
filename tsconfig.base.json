@@ -20,7 +20,8 @@
       "@bizflow/shared/ui": ["libs/shared/ui/src/index.ts"],
       "@bizflow/shared/forms": ["libs/shared/forms/src/index.ts"],
       "@bizflow/shared/utils": ["libs/shared/utils/src/index.ts"],
-      "@bizflow/modules/ecommerce": ["modules/ecommerce/src/index.ts"]
+      "@bizflow/modules/ecommerce": ["modules/ecommerce/src/index.ts"],
+      "@bizflow/modules/realestate": ["modules/realestate/src/index.ts"]
     },
     "strict": true,
     "esModuleInterop": true,

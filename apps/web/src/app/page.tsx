@@ -138,7 +138,8 @@ export default function HomePage() {
       description:
         '부동산 매물 홍보를 위한 전문적인 마케팅 콘텐츠를 생성합니다.',
       icon: <Building2 className="w-7 h-7" />,
-      status: 'coming-soon',
+      status: 'available',
+      href: '/realestate',
       features: [
         '매물 특징 강조 설명',
         '부동산 포털용 설명',
