@@ -21,7 +21,8 @@
       "@bizflow/shared/types": ["../../libs/shared/types/src/index.ts"],
       "@bizflow/shared/llm": ["../../libs/shared/llm/src/index.ts"],
       "@bizflow/shared/ui": ["../../libs/shared/ui/src/index.ts"],
-      "@bizflow/modules/ecommerce": ["../../modules/ecommerce/src/index.ts"]
+      "@bizflow/modules/ecommerce": ["../../modules/ecommerce/src/index.ts"],
+      "@bizflow/modules/realestate": ["../../modules/realestate/src/index.ts"]
     },
     "plugins": [
       {

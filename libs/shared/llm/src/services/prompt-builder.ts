@@ -37,19 +37,63 @@ export class PromptBuilder {
       const value = inputData[variable.name];
       const placeholder = `{{${variable.name}}}`;
 
-      if (value !== undefined && value !== null) {
+      if (value !== undefined && value !== null && value !== '') {
+        // 값이 있으면 치환
         prompt = prompt.replace(
           new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
           String(value),
         );
+      } else if (!variable.required) {
+        // 선택값이 없으면 placeholder를 제거하거나 "정보 없음"으로 대체
+        // 템플릿 작성자가 명시적으로 처리할 수 있도록 placeholder는 그대로 두되,
+        // 빈 문자열이나 "정보 없음"으로 대체할 수 있는 옵션 제공
+        // 현재는 placeholder를 그대로 두지만, 템플릿에서 조건부 처리 가능
+        // 예: {{#if size}}크기: {{size}}{{/if}} 형태의 템플릿 문법이 필요할 수 있음
       }
-      // Optional variables can be left as placeholder (not replaced)
+      // 필수 변수는 validateVariables에서 이미 검증됨
     }
 
-    // Add context if provided
+    // Add context as template variables (context.* 형태로 접근 가능)
+    // 예: {{context.hasPrice}}, {{context.includePriceRecommendation}}
     if (context) {
+      for (const [key, value] of Object.entries(context)) {
+        const placeholder = `{{context.${key}}}`;
+        // boolean, number, string 등은 그대로 치환
+        if (
+          typeof value === 'boolean' ||
+          typeof value === 'number' ||
+          typeof value === 'string'
+        ) {
+          prompt = prompt.replace(
+            new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+            String(value),
+          );
+        }
+        // object나 array는 JSON으로 변환
+        else if (value !== null && value !== undefined) {
+          prompt = prompt.replace(
+            new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+            JSON.stringify(value),
+          );
+        }
+      }
+
+      // Also add context as JSON at the end for LLM to read (backward compatibility)
       const contextStr = JSON.stringify(context);
       prompt = `${prompt}\n\nContext: ${contextStr}`;
+    }
+
+    // Debug logging: Log the final prompt and input data in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== Prompt Builder Debug ===');
+      console.log('Template ID:', templateId);
+      console.log('Input Data:', JSON.stringify(inputData, null, 2));
+      console.log(
+        'Context:',
+        context ? JSON.stringify(context, null, 2) : 'None',
+      );
+      console.log('Final Prompt:', prompt);
+      console.log('=== End Prompt Builder Debug ===');
     }
 
     return prompt;
