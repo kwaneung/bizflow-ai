@@ -400,6 +400,52 @@ Domain Module Output
 
 ---
 
+## Domain Module Extensions
+
+### Ecommerce Module Data
+
+**EcommerceProductInput**:
+- `name`: string (required)
+- `description`: string (required)
+- `price`: number | null (optional)
+- `category`: string | null (optional)
+- `options`: string[] (optional)
+- `images`: string[] (optional)
+
+**EcommerceGeneratedContent**:
+- `seoProductName`: string
+- `summaries`: { oneLine, threeLine, blog }
+- `detailedDescription`: string
+- `promotionalPosts`: { instagram, blog }
+- `hashtags`: string[]
+- `priceInsight`: string (optional)
+- `categoryInsight`: string (optional)
+
+### Real Estate Module Data
+
+**RealEstatePropertyInput**:
+- `location`: string (required)
+- `propertyType`: string (required)
+- `size`: number | null (optional)
+- `price`: number | null (optional)
+- `rooms`: number | null (optional)
+- `bathrooms`: number | null (optional)
+- `floor`: number | null (optional)
+- `buildingAge`: number | null (optional)
+- `description`: string | null (optional)
+- `features`: string[] (optional)
+- `images`: string[] (optional)
+- `targetCustomer`: string | null (optional)
+
+**RealEstateGeneratedContent**:
+- `portalDescription`: string
+- `snsPosts`: { instagram, facebook }
+- `marketingCopy`: { general, firstTimeBuyers, investors, families }
+- `locationHighlights`: { general, transportation, amenities, neighborhood }
+- `uniqueSellingPoints`: string[]
+- `hashtags`: string[]
+- `priceInsight`: string (optional)
+
 ## Summary
 
 The data model supports:
@@ -411,3 +457,4 @@ The data model supports:
 - Type-safe data flow from input to output
 - Flexible prompt template system
 - Audit trail through request/response tracking
+- Domain-specific input/output structures (Ecommerce, Real Estate)

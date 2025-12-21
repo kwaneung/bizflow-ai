@@ -8,8 +8,8 @@ BizFlow AI는 다양한 비즈니스 도메인을 위한 AI 콘텐츠 생성 플
 
 ### 지원 도메인
 
-- **이커머스** - 온라인 쇼핑몰 상품 마케팅 콘텐츠 생성
-- **부동산** (예정) - 부동산 매물 설명 생성
+- **이커머스** ✅ - 온라인 쇼핑몰 상품 마케팅 콘텐츠 생성
+- **부동산** ✅ - 부동산 매물 마케팅 콘텐츠 생성
 - **PT 트레이너** (예정) - 운동 프로그램 콘텐츠 생성
 
 ## 🛠️ 기술 스택
@@ -34,7 +34,8 @@ bizflow-ai/
 │       ├── llm/          # LLM 서비스
 │       └── ui/           # shadcn-ui 디자인 시스템
 ├── modules/
-│   └── ecommerce/        # 이커머스 도메인 모듈
+│   ├── ecommerce/        # 이커머스 도메인 모듈
+│   └── realestate/       # 부동산 도메인 모듈
 ├── supabase/             # DB 마이그레이션
 ├── specs/                # 기술 명세
 └── docs/                 # 문서
@@ -71,10 +72,24 @@ OPENAI_API_KEY=your_openai_api_key
 
 ## 📖 문서
 
+### 설정 가이드
+
 - [환경 설정 가이드](./docs/environment-setup.md)
 - [Supabase API 키 가이드](./docs/supabase-api-keys-guide.md)
 - [Supabase 데이터베이스 관리 가이드](./docs/supabase-database-guide.md)
 - [OpenAI API 키 설정](./docs/openai-api-key-setup.md)
+
+### 설계 문서 (SDD)
+
+- [시스템 아키텍처](./docs/SDD-architecture.md)
+- [모듈 의존성 및 구조](./docs/SDD-module-dependencies.md)
+- [API 설계 문서](./docs/SDD-api-design.md)
+
+### 기능 명세서
+
+- [Core Infrastructure Spec](./specs/001-core-infrastructure/spec.md)
+- [Ecommerce Module Spec](./specs/002-ecommerce/spec.md)
+- [Real Estate Module Spec](./specs/003-realestate/spec.md)
 
 ## 📝 라이선스
 

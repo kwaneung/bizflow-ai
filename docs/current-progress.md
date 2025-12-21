@@ -1,7 +1,7 @@
 # BizFlow AI 프로젝트 진행 상황
 
-**최종 업데이트**: 2025-12-11 (이커머스 모듈 MVP 완료)  
-**현재 브랜치**: `001-core-infrastructure`
+**최종 업데이트**: 2025-12-11 (부동산 모듈 MVP 완료)  
+**현재 브랜치**: `main`
 
 ---
 
@@ -42,7 +42,7 @@
 - [ ] 통합 테스트 (T027) - 미완료
 - [ ] 계약 테스트 (T028) - 미완료
 
-### 이커머스 모듈 (MVP 완료)
+### 이커머스 모듈 (MVP 완료) ✅
 
 - [x] 모듈 구조 및 설정
 - [x] 타입 정의 (`EcommerceInput`, `EcommerceOutput`, `EcommerceProductInput`, `EcommerceGeneratedContent`)
@@ -56,7 +56,28 @@
   - 결과 표시 페이지
   - 복사/다운로드 기능
 - [x] 핵심 기능 완료 (수동 입력 기반 콘텐츠 생성)
+- [x] 가격/카테고리 추천/판단 기능
 - [ ] URL 크롤링 기능 - 제외 (MVP 범위 외)
+- [ ] 이미지 업로드 기능 - 제외 (MVP 범위 외)
+- [ ] 통합 테스트 - 선택적 (MVP 이후)
+- [ ] E2E 테스트 - 선택적 (MVP 이후)
+
+### 부동산 모듈 (MVP 완료) ✅
+
+- [x] 모듈 구조 및 설정
+- [x] 타입 정의 (`RealEstateInput`, `RealEstateOutput`, `RealEstatePropertyInput`, `RealEstateGeneratedContent`)
+- [x] `RealEstateContentService` 서비스 (LLM 통합)
+- [x] API Routes:
+  - `/api/realestate/generate` - 콘텐츠 생성
+- [x] 프롬프트 템플릿 마이그레이션
+- [x] 기본 단위 테스트
+- [x] UI 컴포넌트 완료
+  - 입력 폼 (매물 유형 해시태그 선택, 카카오 주소찾기)
+  - 결과 표시 페이지
+  - 복사/다운로드 기능
+- [x] 핵심 기능 완료 (수동 입력 기반 콘텐츠 생성)
+- [x] 가격 추천/판단 기능
+- [x] 매물 유형 해시태그 스타일 선택 UI
 - [ ] 이미지 업로드 기능 - 제외 (MVP 범위 외)
 - [ ] 통합 테스트 - 선택적 (MVP 이후)
 - [ ] E2E 테스트 - 선택적 (MVP 이후)
@@ -71,6 +92,7 @@
 | 공통 타입 시스템 | 100%   | ✅ 완료      |
 | 공통 LLM 서비스  | 95%    | 🟡 거의 완료 |
 | 이커머스 모듈    | MVP    | ✅ MVP 완료  |
+| 부동산 모듈      | MVP    | ✅ MVP 완료  |
 | UI 컴포넌트      | 100%   | ✅ 완료      |
 
 **전체 진행률**: MVP 완료 (약 95%)
@@ -86,14 +108,22 @@ bizflow-ai/
 │       └── src/app/
 │           ├── api/
 │           │   ├── llm/        # 공통 LLM API
-│           │   └── ecommerce/  # 이커머스 API
-│           └── ecommerce/      # 이커머스 페이지
+│           │   ├── ecommerce/  # 이커머스 API
+│           │   └── realestate/ # 부동산 API
+│           ├── ecommerce/      # 이커머스 페이지
+│           └── realestate/     # 부동산 페이지
 ├── libs/shared/
 │   ├── types/                  # ✅ 공통 타입 시스템
 │   ├── llm/                    # ✅ 공통 LLM 서비스
 │   └── ui/                     # ✅ 공통 UI 컴포넌트
 ├── modules/
-│   └── ecommerce/              # ✅ 이커머스 모듈
+│   ├── ecommerce/              # ✅ 이커머스 모듈
+│   │   ├── src/
+│   │   │   ├── types/          # ✅ 타입 정의
+│   │   │   └── services/       # ✅ 서비스 구현
+│   │   └── __tests__/          # ✅ 기본 테스트
+│   │
+│   └── realestate/             # ✅ 부동산 모듈
 │       ├── src/
 │       │   ├── types/          # ✅ 타입 정의
 │       │   └── services/       # ✅ 서비스 구현
