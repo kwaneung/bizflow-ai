@@ -176,6 +176,11 @@ export interface RealEstateGeneratedContent {
    * Hashtag recommendations for SNS
    */
   hashtags: string[];
+
+  /**
+   * Price insight - evaluation if price is provided, recommendation if not
+   */
+  priceInsight?: string;
 }
 
 /**
@@ -192,4 +197,3 @@ export interface RealEstateOutput extends Output<RealEstateGeneratedContent> {
    */
   outputData: RealEstateGeneratedContent;
 }
-

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Button,
@@ -17,13 +17,37 @@ import {
   Spinner,
   Badge,
 } from '@bizflow/shared/ui';
-import { AlertCircle, Sparkles, Building2 } from 'lucide-react';
+import { AlertCircle, Sparkles, Building2, MapPin } from 'lucide-react';
 import type { RealEstatePropertyInput } from '@bizflow/modules/realestate';
+
+// 카카오 주소찾기 API 타입 정의
+declare global {
+  interface Window {
+    daum: {
+      Postcode: {
+        new (options: {
+          oncomplete: (data: {
+            address: string;
+            addressType: string;
+            bname: string;
+            buildingName: string;
+          }) => void;
+          width?: string;
+          height?: string;
+        }): {
+          open: () => void;
+          embed: (element: HTMLElement) => void;
+        };
+      };
+    };
+  }
+}
 
 export default function RealEstatePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPostcodeLoaded, setIsPostcodeLoaded] = useState(false);
 
   // 매물 입력 상태
   const [propertyData, setPropertyData] = useState<RealEstatePropertyInput>({
@@ -40,6 +64,66 @@ export default function RealEstatePage() {
     targetCustomer: '',
   });
 
+  // 상세주소 (사용자 입력)
+  const [detailAddress, setDetailAddress] = useState('');
+
+  // 매물 유형 선택 상태
+  const [selectedPropertyType, setSelectedPropertyType] = useState<string>('');
+  const [isOtherPropertyType, setIsOtherPropertyType] = useState(false);
+
+  // 매물 유형 옵션
+  const propertyTypeOptions = [
+    '아파트',
+    '오피스텔',
+    '원룸',
+    '주택',
+    '상가',
+    '토지',
+    '기타',
+  ];
+
+  // 카카오 주소찾기 스크립트 로드
+  useEffect(() => {
+    // 이미 로드되어 있는지 확인
+    if (window.daum && window.daum.Postcode) {
+      setIsPostcodeLoaded(true);
+      return;
+    }
+
+    // 스크립트가 이미 추가되어 있는지 확인
+    const existingScript = document.querySelector(
+      'script[src*="postcode.v2.js"]',
+    );
+    if (existingScript) {
+      // 스크립트가 있지만 아직 로드되지 않았을 수 있으므로 대기
+      const checkInterval = setInterval(() => {
+        if (window.daum && window.daum.Postcode) {
+          setIsPostcodeLoaded(true);
+          clearInterval(checkInterval);
+        }
+      }, 100);
+
+      return () => clearInterval(checkInterval);
+    }
+
+    // 스크립트 동적 로드
+    const script = document.createElement('script');
+    script.src =
+      'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    script.async = true;
+    script.onload = () => {
+      setIsPostcodeLoaded(true);
+    };
+    script.onerror = () => {
+      console.error('카카오 주소찾기 스크립트 로드 실패');
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      // 컴포넌트 언마운트 시 스크립트 제거하지 않음 (다른 곳에서도 사용 가능)
+    };
+  }, []);
+
   const handleSubmit = async () => {
     if (!propertyData.location.trim() || !propertyData.propertyType.trim()) {
       setError('위치와 매물 유형을 입력해주세요.');
@@ -50,10 +134,20 @@ export default function RealEstatePage() {
     setError(null);
 
     try {
+      // 기본주소와 상세주소를 합쳐서 location에 저장
+      const fullLocation = detailAddress.trim()
+        ? `${propertyData.location} ${detailAddress.trim()}`
+        : propertyData.location;
+
       const response = await fetch('/api/realestate/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ propertyData }),
+        body: JSON.stringify({
+          propertyData: {
+            ...propertyData,
+            location: fullLocation,
+          },
+        }),
       });
 
       const result = await response.json();
@@ -80,8 +174,45 @@ export default function RealEstatePage() {
     }
   };
 
+  // 카카오 주소찾기 팝업 열기
+  const openPostcodePopup = () => {
+    if (!isPostcodeLoaded || !window.daum || !window.daum.Postcode) {
+      console.error('카카오 주소찾기 서비스를 사용할 수 없습니다.');
+      return;
+    }
+
+    new window.daum.Postcode({
+      oncomplete: (data) => {
+        // 콜백 응답을 console.log에 출력
+        console.log('카카오 주소찾기 콜백 응답:', data);
+        console.log('주소:', data.address);
+        console.log('주소 타입:', data.addressType);
+        console.log('법정동명:', data.bname);
+        console.log('건물명:', data.buildingName);
+
+        // 선택된 주소를 기본주소 필드에 자동 입력 (카카오 주소찾기로만 입력)
+        let baseAddress = data.address;
+        if (data.addressType === 'R') {
+          // 도로명 주소인 경우
+          if (data.bname !== '') {
+            baseAddress += ` (${data.bname})`;
+          }
+          if (data.buildingName !== '') {
+            baseAddress += ` ${data.buildingName}`;
+          }
+        }
+
+        setPropertyData({ ...propertyData, location: baseAddress });
+      },
+      width: '100%',
+      height: '100%',
+    }).open();
+  };
+
   const isFormValid =
-    propertyData.location.trim() && propertyData.propertyType.trim();
+    propertyData.location.trim() &&
+    selectedPropertyType !== '' &&
+    (selectedPropertyType !== '기타' || propertyData.propertyType.trim() !== '');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20">
@@ -119,13 +250,13 @@ export default function RealEstatePage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-6 pt-6">
-            {/* 위치 */}
+            {/* 기본 주소 (카카오 주소찾기로만 입력) */}
             <div className="space-y-2">
               <Label
-                htmlFor="location"
+                htmlFor="baseAddress"
                 className="text-sm font-medium flex items-center gap-2"
               >
-                위치 (주소)
+                기본 주소
                 <Badge
                   variant="destructive"
                   className="text-[10px] px-1.5 py-0"
@@ -133,16 +264,52 @@ export default function RealEstatePage() {
                   필수
                 </Badge>
               </Label>
+              <div className="flex gap-2">
+                <Input
+                  id="baseAddress"
+                  value={propertyData.location}
+                  readOnly
+                  disabled={loading}
+                  placeholder="주소 찾기 버튼을 클릭하여 주소를 검색하세요"
+                  className="h-11 bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 flex-1 cursor-not-allowed"
+                />
+                <Button
+                  type="button"
+                  onClick={openPostcodePopup}
+                  disabled={loading || !isPostcodeLoaded}
+                  variant="outline"
+                  className="h-11 px-4 shrink-0 border-slate-200 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 hover:border-emerald-500"
+                >
+                  <MapPin className="w-4 h-4 mr-2" />
+                  주소 찾기
+                </Button>
+              </div>
+            </div>
+
+            {/* 상세 주소 (사용자 입력) */}
+            <div className="space-y-2">
+              <Label
+                htmlFor="detailAddress"
+                className="text-sm font-medium flex items-center gap-2"
+              >
+                상세 주소
+                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  선택
+                </Badge>
+              </Label>
               <Input
-                id="location"
-                value={propertyData.location}
+                id="detailAddress"
+                value={detailAddress}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setPropertyData({ ...propertyData, location: e.target.value })
+                  setDetailAddress(e.target.value)
                 }
                 disabled={loading}
-                placeholder="예: 서울시 강남구 역삼동"
+                placeholder="예: 101동 1001호, 상가 1층"
                 className="h-11 bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-emerald-500 focus:ring-emerald-500/20"
               />
+              <p className="text-xs text-muted-foreground">
+                동/호수, 층수 등 상세 주소를 입력하세요
+              </p>
             </div>
 
             {/* 매물 유형 */}
@@ -159,19 +326,58 @@ export default function RealEstatePage() {
                   필수
                 </Badge>
               </Label>
-              <Input
-                id="propertyType"
-                value={propertyData.propertyType}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setPropertyData({
-                    ...propertyData,
-                    propertyType: e.target.value,
-                  })
-                }
-                disabled={loading}
-                placeholder="예: 아파트, 오피스텔, 원룸, 주택"
-                className="h-11 bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-emerald-500 focus:ring-emerald-500/20"
-              />
+              <div className="flex flex-wrap gap-2">
+                {propertyTypeOptions.map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => {
+                      if (type === '기타') {
+                        setSelectedPropertyType('기타');
+                        setIsOtherPropertyType(true);
+                        setPropertyData({
+                          ...propertyData,
+                          propertyType: '',
+                        });
+                      } else {
+                        setSelectedPropertyType(type);
+                        setIsOtherPropertyType(false);
+                        setPropertyData({
+                          ...propertyData,
+                          propertyType: type,
+                        });
+                      }
+                    }}
+                    disabled={loading}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all cursor-pointer border ${
+                      selectedPropertyType === type
+                        ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-emerald-600 dark:border-emerald-500 shadow-md shadow-emerald-500/25'
+                        : 'bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:from-slate-100 hover:to-slate-200 dark:hover:from-slate-700 dark:hover:to-slate-600'
+                    } ${
+                      loading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+              {isOtherPropertyType && (
+                <div className="mt-3">
+                  <Input
+                    id="propertyTypeOther"
+                    value={propertyData.propertyType}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setPropertyData({
+                        ...propertyData,
+                        propertyType: e.target.value,
+                      })
+                    }
+                    disabled={loading}
+                    placeholder="매물 유형을 직접 입력하세요"
+                    className="h-11 bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-emerald-500 focus:ring-emerald-500/20"
+                  />
+                </div>
+              )}
             </div>
 
             {/* 크기 & 가격 */}
@@ -182,7 +388,10 @@ export default function RealEstatePage() {
                   className="text-sm font-medium flex items-center gap-2"
                 >
                   크기
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0"
+                  >
                     선택
                   </Badge>
                 </Label>
@@ -204,7 +413,10 @@ export default function RealEstatePage() {
                   className="text-sm font-medium flex items-center gap-2"
                 >
                   가격
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0"
+                  >
                     선택
                   </Badge>
                 </Label>
@@ -229,6 +441,9 @@ export default function RealEstatePage() {
                     원
                   </span>
                 </div>
+                <p className="text-xs text-muted-foreground">
+                  💡 가격을 입력하면 적절성 평가를, 입력하지 않으면 시장성을 기준으로 추천 가격대를 제공합니다
+                </p>
               </div>
             </div>
 
@@ -240,7 +455,10 @@ export default function RealEstatePage() {
                   className="text-sm font-medium flex items-center gap-2"
                 >
                   방 개수
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0"
+                  >
                     선택
                   </Badge>
                 </Label>
@@ -251,7 +469,9 @@ export default function RealEstatePage() {
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setPropertyData({
                       ...propertyData,
-                      rooms: e.target.value ? parseInt(e.target.value, 10) : undefined,
+                      rooms: e.target.value
+                        ? parseInt(e.target.value, 10)
+                        : undefined,
                     })
                   }
                   disabled={loading}
@@ -266,7 +486,10 @@ export default function RealEstatePage() {
                   className="text-sm font-medium flex items-center gap-2"
                 >
                   화장실
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0"
+                  >
                     선택
                   </Badge>
                 </Label>
@@ -297,7 +520,10 @@ export default function RealEstatePage() {
                   className="text-sm font-medium flex items-center gap-2"
                 >
                   층수
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0"
+                  >
                     선택
                   </Badge>
                 </Label>
@@ -319,7 +545,10 @@ export default function RealEstatePage() {
                   className="text-sm font-medium flex items-center gap-2"
                 >
                   건물 연식
-                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1.5 py-0"
+                  >
                     선택
                   </Badge>
                 </Label>
@@ -435,4 +664,3 @@ export default function RealEstatePage() {
     </div>
   );
 }
-

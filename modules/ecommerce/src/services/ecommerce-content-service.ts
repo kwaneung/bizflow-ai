@@ -24,23 +24,78 @@ export class EcommerceContentService {
   async generateContent(
     productInput: EcommerceProductInput,
   ): Promise<EcommerceGeneratedContent> {
+    // Build input data with explicit handling of optional fields
+    const inputData: Record<string, unknown> = {
+      name: productInput.name,
+      description: productInput.description,
+      price: productInput.price ?? null,
+      category: productInput.category ?? null,
+      options: productInput.options ?? [],
+      images: productInput.images ?? [],
+      metadata: productInput.metadata ?? {},
+    };
+
+    // Debug logging: Log which optional fields are provided
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== Ecommerce Input Debug ===');
+      console.log('Required fields:');
+      console.log('  - name:', productInput.name);
+      console.log('  - description:', productInput.description);
+      console.log('\nOptional fields provided:');
+      if (inputData.price !== null && inputData.price !== undefined) {
+        console.log(
+          '  ✓ price:',
+          inputData.price,
+          '(값이 있으므로 적절성 판단 예정)',
+        );
+      } else {
+        console.log('  ✗ price: (not provided - AI가 추천 제공 예정)');
+      }
+      if (
+        inputData.category !== null &&
+        inputData.category !== undefined &&
+        inputData.category !== ''
+      ) {
+        console.log(
+          '  ✓ category:',
+          inputData.category,
+          '(값이 있으므로 적절성 판단 예정)',
+        );
+      } else {
+        console.log('  ✗ category: (not provided - AI가 추천 제공 예정)');
+      }
+      if (
+        inputData.options &&
+        Array.isArray(inputData.options) &&
+        inputData.options.length > 0
+      ) {
+        console.log('  ✓ options:', inputData.options);
+      } else {
+        console.log('  ✗ options: (not provided)');
+      }
+      if (
+        inputData.images &&
+        Array.isArray(inputData.images) &&
+        inputData.images.length > 0
+      ) {
+        console.log('  ✓ images:', inputData.images.length, '개');
+      } else {
+        console.log('  ✗ images: (not provided)');
+      }
+      console.log('=== End Ecommerce Input Debug ===');
+    }
+
     // Build LLM request for ecommerce module
     const request: LLMRequest = {
       moduleId: 'ecommerce',
-      inputData: {
-        name: productInput.name,
-        description: productInput.description,
-        price: productInput.price ?? null,
-        category: productInput.category ?? null,
-        options: productInput.options ?? [],
-        images: productInput.images ?? [],
-        metadata: productInput.metadata ?? {},
-      },
+      inputData,
       // Prompt template ID managed by shared LLM service (Supabase templates or dev fallback)
       promptTemplateId: 'ecommerce-product-content-v1',
       promptTemplateVersion: '1.0.0',
       context: {
         // 가격/카테고리 입력 여부와 상관없이 추천 정보를 포함하도록 명시
+        // 프롬프트 템플릿에서 null을 확인하여 자동으로 판단/추천을 처리하므로
+        // hasPrice, hasCategory 같은 플래그는 불필요 (프롬프트가 null을 보고 판단)
         includePriceRecommendation: true,
         includeCategoryRecommendation: true,
       },

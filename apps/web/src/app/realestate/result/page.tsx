@@ -80,7 +80,7 @@ function ResultContent() {
     if (!content) return;
 
     const allContent = `
-부동산 포털용 설명:
+${content.priceInsight ? `=== 가격 의견 ===\n${content.priceInsight}\n\n` : ''}부동산 포털용 설명:
 ${content.portalDescription}
 
 === SNS 홍보글 ===
@@ -178,6 +178,31 @@ ${content.hashtags.join(' ')}
             </Button>
           </div>
         </div>
+
+        {/* 가격 의견 섹션 */}
+        {content.priceInsight && (
+          <div className="mb-6 space-y-4">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/40 dark:to-teal-950/30 backdrop-blur-sm">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-1">
+                    <CardTitle className="text-lg">가격 의견</CardTitle>
+                    <p className="text-xs text-muted-foreground">
+                      입력한 가격이 있다면 적절성 평가를, 없다면 시장성을 기준으로
+                      추천을 제공합니다.
+                    </p>
+                  </div>
+                  <CopyButton text={content.priceInsight} id="price-insight" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm whitespace-pre-line leading-relaxed">
+                  {content.priceInsight}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* 탭 컨텐츠 */}
         <Tabs defaultValue="portal" className="space-y-4">
