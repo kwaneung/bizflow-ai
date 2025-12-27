@@ -407,22 +407,62 @@ export class PTContentService {
 
   /**
    * Extract string value from LLM output
+   * Handles both JSON objects and plain text responses
    */
   private extractString(data: unknown, fieldName: string): string {
+    // Handle plain text response wrapped by ResponseParser
+    if (
+      data &&
+      typeof data === 'object' &&
+      '_parsedAsText' in data &&
+      (data as { _parsedAsText?: boolean })._parsedAsText === true
+    ) {
+      const content = (data as { content?: string }).content;
+      if (typeof content === 'string' && content.trim().length > 0) {
+        return content.trim();
+      }
+    }
+
+    // Handle direct string response
     if (typeof data === 'string' && data.trim().length > 0) {
       return data.trim();
     }
+
+    // Handle object with the field name
+    if (data && typeof data === 'object') {
+      const obj = data as Record<string, unknown>;
+      const value = obj[fieldName];
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value.trim();
+      }
+    }
+
     throw new Error(`Invalid LLM output: ${fieldName} is missing or invalid`);
   }
 
   /**
    * Extract string with multiple possible keys (flexible parsing)
+   * Handles both JSON objects and plain text responses
    */
   private extractStringFlexible(
     data: unknown,
     keys: string[],
     fieldName: string,
   ): string {
+    // Handle plain text response wrapped by ResponseParser
+    if (
+      data &&
+      typeof data === 'object' &&
+      '_parsedAsText' in data &&
+      (data as { _parsedAsText?: boolean })._parsedAsText === true
+    ) {
+      const content = (data as { content?: string }).content;
+      if (typeof content === 'string' && content.trim().length > 0) {
+        return content.trim();
+      }
+    }
+
+    // Handle object with multiple possible keys
     if (data && typeof data === 'object') {
       const obj = data as Record<string, unknown>;
       for (const key of keys) {
@@ -433,6 +473,7 @@ export class PTContentService {
       }
     }
 
+    // Handle direct string response
     if (typeof data === 'string' && data.trim().length > 0) {
       return data.trim();
     }
