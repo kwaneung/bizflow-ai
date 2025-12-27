@@ -153,7 +153,8 @@ export default function HomePage() {
       description:
         '개인 트레이너와 피트니스 센터를 위한 마케팅 콘텐츠를 생성합니다.',
       icon: <Dumbbell className="w-7 h-7" />,
-      status: 'coming-soon',
+      status: 'available',
+      href: '/pt',
       features: [
         '프로그램 소개 콘텐츠',
         'PT 상담 유도 문구',
