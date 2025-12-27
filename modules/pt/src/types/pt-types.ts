@@ -206,6 +206,11 @@ export interface PTGeneratedContent {
    * Price evaluation/recommendation
    */
   priceInsight?: string;
+
+  /**
+   * Duration evaluation/recommendation
+   */
+  durationInsight?: string;
 }
 
 /**
@@ -222,4 +227,3 @@ export interface PTOutput extends Output<PTGeneratedContent> {
    */
   outputData: PTGeneratedContent;
 }
-

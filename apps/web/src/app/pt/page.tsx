@@ -61,6 +61,38 @@ export default function PTPage() {
     });
   };
 
+  // 프로그램 유형 선택 상태
+  const [selectedProgramType, setSelectedProgramType] = useState<string>('');
+  const [isOtherProgramType, setIsOtherProgramType] = useState(false);
+
+  // 목표 선택 상태
+  const [selectedGoal, setSelectedGoal] = useState<string>('');
+  const [isOtherGoal, setIsOtherGoal] = useState(false);
+
+  // 프로그램 유형 옵션
+  const programTypeOptions = [
+    '다이어트',
+    '근력운동',
+    '요가',
+    '필라테스',
+    '복싱',
+    '크로스핏',
+    '재활운동',
+    '기타',
+  ];
+
+  // 목표 옵션
+  const goalOptions = [
+    '체중 감량',
+    '근력 향상',
+    '체형 교정',
+    '재활',
+    '건강 증진',
+    '체력 향상',
+    '근육량 증가',
+    '기타',
+  ];
+
   // Target Customers 관리
   const targetCustomerOptions = [
     '초보자',
@@ -87,7 +119,13 @@ export default function PTPage() {
   };
 
   const handleSubmit = async () => {
-    if (!programData.name.trim() || !programData.programType.trim() || !programData.goals.trim()) {
+    if (
+      !programData.name.trim() ||
+      !selectedProgramType ||
+      (selectedProgramType === '기타' && !programData.programType.trim()) ||
+      !selectedGoal ||
+      (selectedGoal === '기타' && !programData.goals.trim())
+    ) {
       setError('프로그램명, 프로그램 유형, 목표를 입력해주세요.');
       return;
     }
@@ -150,8 +188,10 @@ export default function PTPage() {
 
   const isFormValid =
     programData.name.trim() &&
-    programData.programType.trim() &&
-    programData.goals.trim();
+    selectedProgramType !== '' &&
+    (selectedProgramType !== '기타' || programData.programType.trim() !== '') &&
+    selectedGoal !== '' &&
+    (selectedGoal !== '기타' || programData.goals.trim() !== '');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20">
@@ -215,60 +255,140 @@ export default function PTPage() {
               />
             </div>
 
-            {/* 프로그램 유형 & 목표 */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label
-                  htmlFor="programType"
-                  className="text-sm font-medium flex items-center gap-2"
+            {/* 프로그램 유형 */}
+            <div className="space-y-2">
+              <Label
+                htmlFor="programType"
+                className="text-sm font-medium flex items-center gap-2"
+              >
+                프로그램 유형
+                <Badge
+                  variant="destructive"
+                  className="text-[10px] px-1.5 py-0"
                 >
-                  프로그램 유형
-                  <Badge
-                    variant="destructive"
-                    className="text-[10px] px-1.5 py-0"
+                  필수
+                </Badge>
+              </Label>
+              <div className="flex flex-wrap gap-2">
+                {programTypeOptions.map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => {
+                      if (type === '기타') {
+                        setSelectedProgramType('기타');
+                        setIsOtherProgramType(true);
+                        setProgramData({
+                          ...programData,
+                          programType: '',
+                        });
+                      } else {
+                        setSelectedProgramType(type);
+                        setIsOtherProgramType(false);
+                        setProgramData({
+                          ...programData,
+                          programType: type,
+                        });
+                      }
+                    }}
+                    disabled={loading}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all cursor-pointer border ${
+                      selectedProgramType === type
+                        ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-emerald-600 dark:border-emerald-500 shadow-md shadow-emerald-500/25'
+                        : 'bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:from-slate-100 hover:to-slate-200 dark:hover:from-slate-700 dark:hover:to-slate-600'
+                    } ${
+                      loading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   >
-                    필수
-                  </Badge>
-                </Label>
-                <Input
-                  id="programType"
-                  value={programData.programType}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setProgramData({
-                      ...programData,
-                      programType: e.target.value,
-                    })
-                  }
-                  disabled={loading}
-                  placeholder="예: 다이어트, 근력운동, 요가"
-                  className="h-11 bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
-                />
+                    {type}
+                  </button>
+                ))}
               </div>
+              {isOtherProgramType && (
+                <div className="mt-3">
+                  <Input
+                    id="programTypeOther"
+                    value={programData.programType}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setProgramData({
+                        ...programData,
+                        programType: e.target.value,
+                      })
+                    }
+                    disabled={loading}
+                    placeholder="프로그램 유형을 직접 입력하세요"
+                    className="h-11 bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-emerald-500 focus:ring-emerald-500/20"
+                  />
+                </div>
+              )}
+            </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="goals"
-                  className="text-sm font-medium flex items-center gap-2"
+            {/* 목표 */}
+            <div className="space-y-2">
+              <Label
+                htmlFor="goals"
+                className="text-sm font-medium flex items-center gap-2"
+              >
+                목표
+                <Badge
+                  variant="destructive"
+                  className="text-[10px] px-1.5 py-0"
                 >
-                  목표
-                  <Badge
-                    variant="destructive"
-                    className="text-[10px] px-1.5 py-0"
+                  필수
+                </Badge>
+              </Label>
+              <div className="flex flex-wrap gap-2">
+                {goalOptions.map((goal) => (
+                  <button
+                    key={goal}
+                    type="button"
+                    onClick={() => {
+                      if (goal === '기타') {
+                        setSelectedGoal('기타');
+                        setIsOtherGoal(true);
+                        setProgramData({
+                          ...programData,
+                          goals: '',
+                        });
+                      } else {
+                        setSelectedGoal(goal);
+                        setIsOtherGoal(false);
+                        setProgramData({
+                          ...programData,
+                          goals: goal,
+                        });
+                      }
+                    }}
+                    disabled={loading}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all cursor-pointer border ${
+                      selectedGoal === goal
+                        ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-emerald-600 dark:border-emerald-500 shadow-md shadow-emerald-500/25'
+                        : 'bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:from-slate-100 hover:to-slate-200 dark:hover:from-slate-700 dark:hover:to-slate-600'
+                    } ${
+                      loading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   >
-                    필수
-                  </Badge>
-                </Label>
-                <Input
-                  id="goals"
-                  value={programData.goals}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setProgramData({ ...programData, goals: e.target.value })
-                  }
-                  disabled={loading}
-                  placeholder="예: 체중 감량, 근력 향상"
-                  className="h-11 bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
-                />
+                    {goal}
+                  </button>
+                ))}
               </div>
+              {isOtherGoal && (
+                <div className="mt-3">
+                  <Input
+                    id="goalOther"
+                    value={programData.goals}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setProgramData({
+                        ...programData,
+                        goals: e.target.value,
+                      })
+                    }
+                    disabled={loading}
+                    placeholder="목표를 직접 입력하세요"
+                    className="h-11 bg-slate-50/50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-emerald-500 focus:ring-emerald-500/20"
+                  />
+                </div>
+              )}
             </div>
 
             {/* 기간 & 가격 */}

@@ -95,6 +95,10 @@ export class PTContentService {
         (inputData.targetCustomers as string[]).length > 0,
       includePriceRecommendation: true,
       hasPrice: inputData.price !== null && inputData.price !== undefined,
+      hasDuration:
+        inputData.duration !== null &&
+        inputData.duration !== undefined &&
+        String(inputData.duration).trim().length > 0,
     };
 
     // Generate all content types in parallel for better performance
@@ -105,7 +109,7 @@ export class PTContentService {
       recruitmentAdCopy,
       targetCustomerCopy,
       hashtags,
-      priceInsight,
+      insights,
     ] = await Promise.all([
       this.generateProgramIntroduction(inputData, context),
       this.generateExerciseEffects(inputData, context),
@@ -123,7 +127,8 @@ export class PTContentService {
       recruitmentAdCopy,
       targetCustomerCopy,
       hashtags,
-      priceInsight: priceInsight || undefined,
+      priceInsight: insights.priceInsight,
+      durationInsight: insights.durationInsight,
     };
   }
 
@@ -381,12 +386,12 @@ export class PTContentService {
   }
 
   /**
-   * Generate price insight
+   * Generate price and duration insight
    */
   private async generatePriceInsight(
     inputData: Record<string, unknown>,
     context: Record<string, unknown>,
-  ): Promise<string | null> {
+  ): Promise<{ priceInsight?: string; durationInsight?: string }> {
     const request: LLMRequest = {
       moduleId: 'pt',
       inputData,
@@ -395,14 +400,31 @@ export class PTContentService {
       context,
     };
 
-    const formattedOutput = await this.llmService.process<string>(request);
-    const result = this.extractStringOptional(formattedOutput.outputData, [
-      'priceInsight',
-      'price_insight',
-      'priceEvaluation',
-      'price_evaluation',
-    ]);
-    return result || null;
+    const formattedOutput = await this.llmService.process<{
+      priceInsight?: string;
+      durationInsight?: string;
+    }>(request);
+
+    const data = formattedOutput.outputData;
+
+    // JSON 객체인 경우
+    if (data && typeof data === 'object') {
+      const obj = data as Record<string, unknown>;
+      return {
+        priceInsight:
+          typeof obj.priceInsight === 'string' &&
+          obj.priceInsight.trim().length > 0
+            ? obj.priceInsight.trim()
+            : undefined,
+        durationInsight:
+          typeof obj.durationInsight === 'string' &&
+          obj.durationInsight.trim().length > 0
+            ? obj.durationInsight.trim()
+            : undefined,
+      };
+    }
+
+    return {};
   }
 
   /**

@@ -108,7 +108,8 @@ ${content.targetCustomerCopy.officeWorkers ? `\n직장인:\n${content.targetCust
 
 === 해시태그 ===
 ${content.hashtags.join(' ')}
-${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsight}` : ''}
+${content.priceInsight ? `\n\n=== 가격 의견 ===\n${content.priceInsight}` : ''}
+${content.durationInsight ? `\n\n=== 기간 의견 ===\n${content.durationInsight}` : ''}
     `.trim();
 
     downloadAsFile(allContent, `pt-content-${Date.now()}.txt`);
@@ -179,35 +180,68 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
           </div>
         </div>
 
-        {/* 가격 인사이트 섹션 (있는 경우) */}
-        {content.priceInsight && (
-          <div className="mb-6">
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/40 dark:to-teal-950/30 backdrop-blur-sm">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col gap-1">
-                    <CardTitle className="text-lg">가격 인사이트</CardTitle>
-                    <p className="text-xs text-muted-foreground">
-                      입력한 가격이 있다면 적절성 평가를, 없다면 시장성을 기준으로
-                      추천을 제공합니다.
-                    </p>
+        {/* 가격 및 기간 인사이트 섹션 */}
+        {(content.priceInsight || content.durationInsight) && (
+          <div className="mb-6 space-y-4">
+            {content.priceInsight && (
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/40 dark:to-teal-950/30 backdrop-blur-sm">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-1">
+                      <CardTitle className="text-lg">가격 의견</CardTitle>
+                      <p className="text-xs text-muted-foreground">
+                        입력한 가격이 있다면 적절성 평가를, 없다면 시장성을
+                        기준으로 추천을 제공합니다.
+                      </p>
+                    </div>
+                    <CopyButton
+                      text={content.priceInsight}
+                      id="price-insight"
+                    />
                   </div>
-                  <CopyButton text={content.priceInsight} id="priceInsight" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm whitespace-pre-line leading-relaxed">
-                  {content.priceInsight}
-                </p>
-              </CardContent>
-            </Card>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm whitespace-pre-line leading-relaxed">
+                    {content.priceInsight}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {content.durationInsight && (
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/40 dark:to-teal-950/30 backdrop-blur-sm">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-1">
+                      <CardTitle className="text-lg">기간 의견</CardTitle>
+                      <p className="text-xs text-muted-foreground">
+                        입력한 기간이 있다면 적절성 평가를, 없다면 목표 달성을
+                        기준으로 추천을 제공합니다.
+                      </p>
+                    </div>
+                    <CopyButton
+                      text={content.durationInsight}
+                      id="duration-insight"
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm whitespace-pre-line leading-relaxed">
+                    {content.durationInsight}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         )}
 
         {/* 탭 컨텐츠 */}
         <Tabs defaultValue="introduction" className="space-y-4">
           <TabsList className="grid grid-cols-6 h-auto p-1 bg-slate-100/80 dark:bg-slate-800/80">
-            <TabsTrigger value="introduction" className="text-xs sm:text-sm py-2">
+            <TabsTrigger
+              value="introduction"
+              className="text-xs sm:text-sm py-2"
+            >
               <FileText className="w-4 h-4 mr-1.5 hidden sm:block" />
               프로그램 소개
             </TabsTrigger>
@@ -219,7 +253,10 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
               <Megaphone className="w-4 h-4 mr-1.5 hidden sm:block" />
               SNS 게시물
             </TabsTrigger>
-            <TabsTrigger value="recruitment" className="text-xs sm:text-sm py-2">
+            <TabsTrigger
+              value="recruitment"
+              className="text-xs sm:text-sm py-2"
+            >
               회원 모집
             </TabsTrigger>
             <TabsTrigger value="target" className="text-xs sm:text-sm py-2">
@@ -281,7 +318,9 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Instagram className="w-5 h-5 text-pink-500" />
-                      <CardTitle className="text-lg">인스타그램 게시물</CardTitle>
+                      <CardTitle className="text-lg">
+                        인스타그램 게시물
+                      </CardTitle>
                     </div>
                     <CopyButton
                       text={content.snsPosts.instagram}
@@ -352,7 +391,9 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Users className="w-5 h-5 text-emerald-500" />
-                      <CardTitle className="text-lg">일반 마케팅 문구</CardTitle>
+                      <CardTitle className="text-lg">
+                        일반 마케팅 문구
+                      </CardTitle>
                     </div>
                     <CopyButton
                       text={content.targetCustomerCopy.general}
@@ -375,7 +416,9 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
                         <Badge variant="secondary" className="text-xs">
                           초보자
                         </Badge>
-                        <CardTitle className="text-lg">초보자용 마케팅 문구</CardTitle>
+                        <CardTitle className="text-lg">
+                          초보자용 마케팅 문구
+                        </CardTitle>
                       </div>
                       <CopyButton
                         text={content.targetCustomerCopy.beginners}
@@ -399,7 +442,9 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
                         <Badge variant="secondary" className="text-xs">
                           중급자
                         </Badge>
-                        <CardTitle className="text-lg">중급자용 마케팅 문구</CardTitle>
+                        <CardTitle className="text-lg">
+                          중급자용 마케팅 문구
+                        </CardTitle>
                       </div>
                       <CopyButton
                         text={content.targetCustomerCopy.intermediate}
@@ -423,7 +468,9 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
                         <Badge variant="secondary" className="text-xs">
                           고급자
                         </Badge>
-                        <CardTitle className="text-lg">고급자용 마케팅 문구</CardTitle>
+                        <CardTitle className="text-lg">
+                          고급자용 마케팅 문구
+                        </CardTitle>
                       </div>
                       <CopyButton
                         text={content.targetCustomerCopy.advanced}
@@ -447,7 +494,9 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
                         <Badge variant="secondary" className="text-xs">
                           여성
                         </Badge>
-                        <CardTitle className="text-lg">여성용 마케팅 문구</CardTitle>
+                        <CardTitle className="text-lg">
+                          여성용 마케팅 문구
+                        </CardTitle>
                       </div>
                       <CopyButton
                         text={content.targetCustomerCopy.female}
@@ -471,7 +520,9 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
                         <Badge variant="secondary" className="text-xs">
                           남성
                         </Badge>
-                        <CardTitle className="text-lg">남성용 마케팅 문구</CardTitle>
+                        <CardTitle className="text-lg">
+                          남성용 마케팅 문구
+                        </CardTitle>
                       </div>
                       <CopyButton
                         text={content.targetCustomerCopy.male}
@@ -495,7 +546,9 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
                         <Badge variant="secondary" className="text-xs">
                           시니어
                         </Badge>
-                        <CardTitle className="text-lg">시니어용 마케팅 문구</CardTitle>
+                        <CardTitle className="text-lg">
+                          시니어용 마케팅 문구
+                        </CardTitle>
                       </div>
                       <CopyButton
                         text={content.targetCustomerCopy.seniors}
@@ -519,7 +572,9 @@ ${content.priceInsight ? `\n\n=== 가격 인사이트 ===\n${content.priceInsigh
                         <Badge variant="secondary" className="text-xs">
                           직장인
                         </Badge>
-                        <CardTitle className="text-lg">직장인용 마케팅 문구</CardTitle>
+                        <CardTitle className="text-lg">
+                          직장인용 마케팅 문구
+                        </CardTitle>
                       </div>
                       <CopyButton
                         text={content.targetCustomerCopy.officeWorkers}
@@ -603,4 +658,3 @@ export default function PTResultPage() {
     </Suspense>
   );
 }
-
