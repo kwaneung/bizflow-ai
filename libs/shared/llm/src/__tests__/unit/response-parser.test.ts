@@ -1,4 +1,4 @@
-import { ResponseParser } from '../services/response-parser';
+import { ResponseParser } from '../../services/response-parser';
 
 describe('ResponseParser', () => {
   let responseParser: ResponseParser;

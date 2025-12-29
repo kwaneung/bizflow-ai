@@ -1,5 +1,5 @@
-import { ErrorHandler } from '../utils/error-handler';
-import type { ErrorContext, ErrorType } from '../types/llm-types';
+import { ErrorHandler } from '../../utils/error-handler';
+import type { ErrorContext, ErrorType } from '../../types/llm-types';
 
 describe('ErrorHandler', () => {
   let errorHandler: ErrorHandler;

@@ -1,9 +1,9 @@
-import { PromptBuilder } from '../services/prompt-builder';
-import { supabaseClient } from '../utils/supabase-client';
-import type { PromptTemplate } from '../types/llm-types';
+import { PromptBuilder } from '../../services/prompt-builder';
+import { supabaseClient } from '../../utils/supabase-client';
+import type { PromptTemplate } from '../../types/llm-types';
 
 // Mock Supabase client
-jest.mock('../utils/supabase-client', () => ({
+jest.mock('../../utils/supabase-client', () => ({
   supabaseClient: {
     loadPromptTemplate: jest.fn(),
   },

@@ -1,16 +1,16 @@
-import { LLMService } from '../services/llm-service';
-import { PromptBuilder } from '../services/prompt-builder';
-import { ResponseParser } from '../services/response-parser';
-import { RateLimiter } from '../services/rate-limiter';
-import { ErrorHandler } from '../utils/error-handler';
-import { supabaseClient } from '../utils/supabase-client';
-import type { LLMRequest } from '../types/llm-types';
+import { LLMService } from '../../services/llm-service';
+import { PromptBuilder } from '../../services/prompt-builder';
+import { ResponseParser } from '../../services/response-parser';
+import { RateLimiter } from '../../services/rate-limiter';
+import { ErrorHandler } from '../../utils/error-handler';
+import { supabaseClient } from '../../utils/supabase-client';
+import type { LLMRequest } from '../../types/llm-types';
 
 // Mock fetch globally
 global.fetch = jest.fn();
 
 // Mock Supabase client
-jest.mock('../utils/supabase-client', () => ({
+jest.mock('../../utils/supabase-client', () => ({
   supabaseClient: {
     saveLLMRequest: jest.fn().mockResolvedValue('request-id'),
     updateLLMRequestStatus: jest.fn().mockResolvedValue(undefined),
@@ -107,7 +107,8 @@ describe('LLMService', () => {
       expect(mockPromptBuilder.build).toHaveBeenCalledWith(
         'test-template',
         mockRequest.inputData,
-        mockRequest.context
+        mockRequest.context,
+        mockRequest.promptTemplateVersion
       );
       expect(result).toBeDefined();
       expect(result.outputData).toEqual(mockParsedData);

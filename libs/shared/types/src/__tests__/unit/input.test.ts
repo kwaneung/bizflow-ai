@@ -1,5 +1,5 @@
-import { Input } from '../input';
-import { isInput } from '../type-guards';
+import { Input } from '../../input';
+import { isInput } from '../../type-guards';
 
 describe('Input<T>', () => {
   describe('interface structure', () => {
@@ -112,4 +112,3 @@ describe('isInput type guard', () => {
     expect(isInput(true)).toBe(false);
   });
 });
-

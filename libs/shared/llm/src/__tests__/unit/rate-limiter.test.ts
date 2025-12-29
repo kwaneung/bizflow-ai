@@ -1,5 +1,5 @@
-import { RateLimiter } from '../services/rate-limiter';
-import type { LLMRequest, RateLimitConfig } from '../types/llm-types';
+import { RateLimiter } from '../../services/rate-limiter';
+import type { LLMRequest, RateLimitConfig } from '../../types/llm-types';
 
 describe('RateLimiter', () => {
   let rateLimiter: RateLimiter;

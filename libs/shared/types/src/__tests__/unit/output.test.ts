@@ -1,5 +1,5 @@
-import { Output } from '../output';
-import { isOutput } from '../type-guards';
+import { Output } from '../../output';
+import { isOutput } from '../../type-guards';
 
 describe('Output<T>', () => {
   describe('interface structure', () => {
@@ -159,4 +159,3 @@ describe('isOutput type guard', () => {
     expect(isOutput(true)).toBe(false);
   });
 });
-
