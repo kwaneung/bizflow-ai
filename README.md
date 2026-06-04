@@ -1,96 +1,96 @@
 # BizFlow AI
 
-AI 기반 멀티 도메인 콘텐츠 생성 SaaS 플랫폼
+> **Archived (2026-06)** — OpenAI·Supabase 연동이 만료되어 **Live 데모는 동작하지 않습니다.**  
+> 코드·명세·아키텍처 문서는 포트폴리오·학습 참고용으로만 유지합니다.
 
-## 🎯 프로젝트 소개
+AI 기반 **멀티 도메인 마케팅 콘텐츠 생성** MVP입니다. Nx 모노레포로 도메인별 모듈을 분리하고, 공통 LLM 파이프라인(Supabase 프롬프트 템플릿 + OpenAI)으로 이커머스·부동산·PT 홍보 문구를 생성합니다.
 
-BizFlow AI는 다양한 비즈니스 도메인을 위한 AI 콘텐츠 생성 플랫폼입니다.
+## Links
 
-### 지원 도메인
+| | |
+|---|---|
+| **Repository** | https://github.com/kwaneung/bizflow-ai |
+| **Live (종료)** | https://bizflow-ai-nu.vercel.app — 키·DB 미연동 시 오류 표시 |
 
-- **이커머스** ✅ - 온라인 쇼핑몰 상품 마케팅 콘텐츠 생성
-- **부동산** ✅ - 부동산 매물 마케팅 콘텐츠 생성
-- **PT 트레이너** (예정) - 운동 프로그램 콘텐츠 생성
+## Highlights (MVP 시점)
 
-## 🛠️ 기술 스택
+- **Nx 22 monorepo** — `apps/web`, `libs/shared/{types,llm,ui}`, `modules/{ecommerce,realestate,pt}`
+- **공통 LLM 레이어** — PromptBuilder, RateLimiter, 요청/응답 Supabase 저장
+- **도메인 UI** — 입력 폼 → `/api/*/generate` → 결과·복사/다운로드
+- **문서화** — `specs/`, `docs/SDD-*`, 환경 설정 가이드
+- **테스트** — shared types·LLM 단위 테스트 (Jest)
 
-| 분류         | 기술                             |
-| ------------ | -------------------------------- |
-| **Frontend** | Next.js 16, React 19, TypeScript |
-| **Styling**  | Tailwind CSS, shadcn-ui          |
-| **Backend**  | Supabase (PostgreSQL)            |
-| **AI**       | OpenAI API                       |
-| **Infra**    | Vercel, Nx Monorepo              |
+## Stack
 
-## 📁 프로젝트 구조
+| 분류 | 기술 |
+|------|------|
+| Frontend | Next.js 16, React 19, TypeScript, React Compiler |
+| UI | Tailwind CSS, shadcn/ui (shared lib) |
+| Data | Supabase (PostgreSQL, prompt_templates, LLM logs) |
+| AI | OpenAI API |
+| Tooling | Nx, pnpm, Vercel |
+
+## Modules
+
+| 도메인 | 경로 | MVP |
+|--------|------|-----|
+| 이커머스 | `/ecommerce` | 상품명·요약·상세·SNS·해시태그 생성 |
+| 부동산 | `/realestate` | 매물 설명·포털/SNS 문구 |
+| PT | `/pt` | 프로그램·상담 유도·홍보 문구 |
+
+## Project structure
 
 ```
 bizflow-ai/
-├── apps/
-│   └── web/              # Next.js 웹 애플리케이션
-├── libs/
-│   └── shared/
-│       ├── types/        # 공통 타입 정의
-│       ├── llm/          # LLM 서비스
-│       └── ui/           # shadcn-ui 디자인 시스템
+├── apps/web/                 # Next.js App Router
+├── libs/shared/
+│   ├── types/                # Input/Output, LLM 공통 타입
+│   ├── llm/                  # LLMService, rate limit, parser
+│   └── ui/                   # shadcn 컴포넌트
 ├── modules/
-│   ├── ecommerce/        # 이커머스 도메인 모듈
-│   └── realestate/       # 부동산 도메인 모듈
-├── supabase/             # DB 마이그레이션
-├── specs/                # 기술 명세
-└── docs/                 # 문서
+│   ├── ecommerce/
+│   ├── realestate/
+│   └── pt/
+├── supabase/migrations/
+├── specs/                    # 기능 명세 (001–004)
+└── docs/                     # SDD, 환경 설정
 ```
 
-## 🚀 시작하기
+## Why archived
 
-### 요구사항
+- OpenAI / Supabase **API 키·프로젝트 미갱신**으로 프로덕션 LLM 호출 불가
+- Live에서 `Template not found` / credential 오류 등 **데모 품질 유지 불가**
+- 재개 시: 환경 변수·마이그레이션·프롬프트 템플릿 재적용 후 Unarchive 검토
 
-- Node.js 24+
-- pnpm 10+
+## Local run (참고)
 
-### 설치
+키와 Supabase를 직접 연결하면 로컬에서만 동작할 수 있습니다.
 
 ```bash
-# 의존성 설치
 pnpm install
-
-# 개발 서버 실행
 pnpm nx dev web
 ```
 
-### 환경 변수
-
-`.env.local` 파일 생성:
+`.env.local` 예시:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-OPENAI_API_KEY=your_openai_api_key
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+OPENAI_API_KEY=
 ```
 
-자세한 설정은 [docs/environment-setup.md](./docs/environment-setup.md) 참고
+상세: [docs/environment-setup.md](./docs/environment-setup.md)
 
-## 📖 문서
+## Documentation
 
-### 설정 가이드
-
-- [환경 설정 가이드](./docs/environment-setup.md)
-- [Supabase API 키 가이드](./docs/supabase-api-keys-guide.md)
-- [Supabase 데이터베이스 관리 가이드](./docs/supabase-database-guide.md)
-- [OpenAI API 키 설정](./docs/openai-api-key-setup.md)
-
-### 설계 문서 (SDD)
-
+- [진행 상황 (MVP 기준)](./docs/current-progress.md)
 - [시스템 아키텍처](./docs/SDD-architecture.md)
-- [모듈 의존성 및 구조](./docs/SDD-module-dependencies.md)
-- [API 설계 문서](./docs/SDD-api-design.md)
+- [Core spec](./specs/001-core-infrastructure/spec.md) · [Ecommerce](./specs/002-ecommerce/spec.md) · [Real estate](./specs/003-realestate/spec.md) · [PT](./specs/004-pt/spec.md)
 
-### 기능 명세서
+## Status
 
-- [Core Infrastructure Spec](./specs/001-core-infrastructure/spec.md)
-- [Ecommerce Module Spec](./specs/002-ecommerce/spec.md)
-- [Real Estate Module Spec](./specs/003-realestate/spec.md)
-
-## 📝 라이선스
-
-Private
+| | |
+|---|---|
+| **Period** | 2025-12 (MVP) |
+| **Maintenance** | Archived — 무기한 미운영 |
+| **License** | 포트폴리오 참고용; 별도 LICENSE 없음 — 재사용·상업 이용 문의 필요 |
